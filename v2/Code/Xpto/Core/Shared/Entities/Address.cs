@@ -37,7 +37,7 @@ namespace Xpto.Core.Shared.Entities
             Id = Guid.NewGuid();
         }
 
-        public override string ToString()
+        public override string ToString() //melhor usar o string builder porque ele não fica ocupando memoria criando variaveis
         {
             return $"{Street}, {Number} - {District}, {City} - {State}, CEP: {ZipCode}"; //formatar zipcode
                 //string.Join(" ", Street, Number, Complement, District, City, State, ZipCode);

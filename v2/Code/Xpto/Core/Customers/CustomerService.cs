@@ -447,7 +447,7 @@ namespace Xpto.Core.Customers
             return customer;
         }
 
-        private Customer CreatePhones(Customer customer)
+        public Customer CreatePhones(Customer customer)
         {
             int numberInputValidation = 0;
             bool resultInputValidation = false;
@@ -458,6 +458,7 @@ namespace Xpto.Core.Customers
 
                 var phone = new Phone();
                 phone.Number = Convert.ToInt64(Console.ReadLine());
+                phone.SeparateDDDFromNumber();
                 customer.Phones.Add(phone);
 
                 Console.WriteLine("Deseja cadastrar outro numero? Digite: 1 - Sim, Qualquer numero - Não");
