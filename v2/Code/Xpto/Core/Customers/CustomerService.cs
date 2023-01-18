@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xpto.Core.Shared.Entities;
+using Xpto.Core.Shared.Functions;
 
 namespace Xpto.Core.Customers
 {
@@ -128,7 +129,7 @@ namespace Xpto.Core.Customers
             }
         }
 
-        public void Create()
+        public async void Create()
         {
             App.Clear();
 
@@ -179,7 +180,7 @@ namespace Xpto.Core.Customers
                 }
             }
 
-            customer = CreateAddress(customer);
+            customer = await CreateAddress(customer);
             customer = CreatePhones(customer);
             customer = CreateEmails(customer);
 
@@ -385,31 +386,45 @@ namespace Xpto.Core.Customers
             }
         }
 
-        private Customer CreateAddress(Customer customer)
+        public async Task<Customer> CreateAddress(Customer customer)
         {
             int numberInputValidation = 0;
             bool resultInputValidation = false;
+            var zipFunction = new ZipCodeFunction();
 
             do
             {
                 Console.Write("Endereço:");
 
                 var address = new Address();
+                string tempZipCode;
 
                 Console.Write("CEP:");
-                address.ZipCode = Console.ReadLine();
-                Console.Write("Logradouro:");
-                address.Street = Console.ReadLine();
-                Console.Write("Número:");
-                address.Number = Console.ReadLine();
-                Console.Write("Complemento:");
-                address.Complement = Console.ReadLine();
-                Console.Write("Bairro:");
-                address.District = Console.ReadLine();
-                Console.Write("Cidade:");
-                address.City = Console.ReadLine();
-                Console.Write("Estado:");
-                address.State = Console.ReadLine();
+                tempZipCode = Console.ReadLine();
+
+                address = await zipFunction.GetAddressByZipCode(tempZipCode);
+
+                if(address.Street != null)
+                {
+                    Console.Write("Número:");
+                    address.Number = Console.ReadLine();
+                }
+                else
+                {
+                    //address.ZipCode = Console.ReadLine();
+                    Console.Write("Logradouro:");
+                    address.Street = Console.ReadLine();
+                    Console.Write("Número:");
+                    address.Number = Console.ReadLine();
+                    Console.Write("Complemento:");
+                    address.Complement = Console.ReadLine();
+                    Console.Write("Bairro:");
+                    address.District = Console.ReadLine();
+                    Console.Write("Cidade:");
+                    address.City = Console.ReadLine();
+                    Console.Write("Estado:");
+                    address.State = Console.ReadLine();
+                }
 
                 customer.Addresses.Add(address);
 
