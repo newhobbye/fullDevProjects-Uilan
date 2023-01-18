@@ -26,7 +26,8 @@ namespace Xpto.Core.Shared.Entities
 
         public override string ToString()
         {
-            return string.Join(" ", Street, Number, Complement, District, City, State, ZipCode);
+            return $"{Street}, {Number} - {District}, {City} - {State}, CEP: {ZipCode}"; //formatar zipcode
+                //string.Join(" ", Street, Number, Complement, District, City, State, ZipCode);
         }
     }
 }

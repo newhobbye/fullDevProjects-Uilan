@@ -18,7 +18,13 @@ namespace Xpto.Core.Shared.Entities
 
         public override string ToString()
         {
-            return $"({Ddd}) {Number}";
+            return $"({Ddd}) {Number.ToString().Substring(0, 4)}-{Number.ToString().Substring(5)}";
+        }
+
+        public void SepararDDDNumero()
+        {
+            Ddd = int.Parse(Number.ToString()[..1]); //substring
+            Number = long.Parse(Number.ToString()[2..]);
         }
     }
 }
