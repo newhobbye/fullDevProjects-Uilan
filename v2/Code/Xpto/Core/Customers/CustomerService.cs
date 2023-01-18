@@ -416,6 +416,6 @@ namespace Xpto.Core.Customers
                 Console.WriteLine();
                 Console.Write("Informe o código do cliente ou 0 para sair: ");
             }
-        }
+        } 
     }
 }
