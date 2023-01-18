@@ -16,15 +16,17 @@ namespace Xpto.Core.Shared.Entities
             Id = Guid.NewGuid();
         }
 
+        public void SeparateDDDFromNumber()
+        {
+            Ddd = int.Parse(Number.ToString()[..1]); //substring
+            Number = long.Parse(Number.ToString()[2..]);
+        }
+
         public override string ToString()
         {
             return $"({Ddd}) {Number.ToString().Substring(0, 4)}-{Number.ToString().Substring(5)}";
         }
 
-        public void SepararDDDNumero()
-        {
-            Ddd = int.Parse(Number.ToString()[..1]); //substring
-            Number = long.Parse(Number.ToString()[2..]);
-        }
+        
     }
 }

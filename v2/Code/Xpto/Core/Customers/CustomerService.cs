@@ -179,42 +179,9 @@ namespace Xpto.Core.Customers
                 }
             }
 
-            Console.Write("Endereço:");
-
-            var address = new Address();
-
-            Console.Write("CEP:");
-            address.ZipCode = Console.ReadLine();
-            Console.Write("Logradouro:");
-            address.Street = Console.ReadLine();
-            Console.Write("Número:");
-            address.Number = Console.ReadLine();
-            Console.Write("Complemento:");
-            address.Complement = Console.ReadLine();
-            Console.Write("Bairro:");
-            address.District = Console.ReadLine();
-            Console.Write("Cidade:");
-            address.City = Console.ReadLine();
-            Console.Write("Estado:");
-            address.State = Console.ReadLine();
-
-            customer.Addresses.Add(address);
-
-
-            Console.Write("Telefone com DDD:");
-
-            var phone = new Phone();
-            phone.Number = Convert.ToInt64(Console.ReadLine());
-            customer.Phones.Add(phone);
-
-
-            Console.Write("E-mail:");
-
-            var email = new Email();
-            email.Address = Console.ReadLine();
-            customer.Emails.Add(email);
-
-
+            customer = CreateAddress(customer);
+            customer = CreatePhones(customer);
+            customer = CreateEmails(customer);
 
             Console.Write("Observação:");
             customer.Note = Console.ReadLine();
@@ -416,6 +383,123 @@ namespace Xpto.Core.Customers
                 Console.WriteLine();
                 Console.Write("Informe o código do cliente ou 0 para sair: ");
             }
-        } 
+        }
+
+        private Customer CreateAddress(Customer customer)
+        {
+            int numberInputValidation = 0;
+            bool resultInputValidation = false;
+
+            do
+            {
+                Console.Write("Endereço:");
+
+                var address = new Address();
+
+                Console.Write("CEP:");
+                address.ZipCode = Console.ReadLine();
+                Console.Write("Logradouro:");
+                address.Street = Console.ReadLine();
+                Console.Write("Número:");
+                address.Number = Console.ReadLine();
+                Console.Write("Complemento:");
+                address.Complement = Console.ReadLine();
+                Console.Write("Bairro:");
+                address.District = Console.ReadLine();
+                Console.Write("Cidade:");
+                address.City = Console.ReadLine();
+                Console.Write("Estado:");
+                address.State = Console.ReadLine();
+
+                customer.Addresses.Add(address);
+
+                Console.WriteLine("Deseja cadastrar outro endereço? Digite: 1 - Sim, Qualquer numero - Não");
+                resultInputValidation = int.TryParse(Console.ReadLine(), out numberInputValidation);
+
+                if (resultInputValidation == false)
+                {
+                    do
+                    {
+                        Console.WriteLine("Digito invalido! Favor digitar novamente.");
+                        Console.WriteLine("Deseja cadastrar outro endereço? Digite: 1 - Sim, Qualquer numero - Não");
+                        resultInputValidation = int.TryParse(Console.ReadLine(), out numberInputValidation);
+
+                    } while (resultInputValidation == false);
+                }
+
+            } while (numberInputValidation != 1);
+
+            return customer;
+        }
+
+        private Customer CreatePhones(Customer customer)
+        {
+            int numberInputValidation = 0;
+            bool resultInputValidation = false;
+
+            do
+            {
+                Console.Write("Telefone com DDD:");
+
+                var phone = new Phone();
+                phone.Number = Convert.ToInt64(Console.ReadLine());
+                customer.Phones.Add(phone);
+
+                Console.WriteLine("Deseja cadastrar outro numero? Digite: 1 - Sim, Qualquer numero - Não");
+                resultInputValidation = int.TryParse(Console.ReadLine(), out numberInputValidation);
+
+                if (resultInputValidation == false)
+                {
+                    do
+                    {
+                        Console.WriteLine("Digito invalido! Favor digitar novamente.");
+                        Console.WriteLine("Deseja cadastrar outro numero? Digite: 1 - Sim, Qualquer numero - Não");
+                        resultInputValidation = int.TryParse(Console.ReadLine(), out numberInputValidation);
+
+                    } while (resultInputValidation == false);
+                }
+
+            } while (numberInputValidation != 1);
+
+            return customer;
+
+        }
+
+        public Customer CreateEmails(Customer customer)
+        {
+
+            int numberInputValidation = 0;
+            bool resultInputValidation = false;
+
+            do
+            {
+                Console.Write("E-mail:");
+
+                var email = new Email();
+                email.Address = Console.ReadLine();
+                customer.Emails.Add(email);
+
+                Console.WriteLine("Deseja cadastrar outro e-mail? Digite: 1 - Sim, Qualquer numero - Não");
+                resultInputValidation = int.TryParse(Console.ReadLine(), out numberInputValidation);
+
+                if (resultInputValidation == false)
+                {
+                    do
+                    {
+                        Console.WriteLine("Digito invalido! Favor digitar novamente.");
+                        Console.WriteLine("Deseja cadastrar outro e-mail? Digite: 1 - Sim, Qualquer numero - Não");
+                        resultInputValidation = int.TryParse(Console.ReadLine(), out numberInputValidation);
+
+                    } while (resultInputValidation == false);
+
+                }
+
+            } while (numberInputValidation != 1);
+
+            return customer;
+
+
+
+        }
     }
 }
