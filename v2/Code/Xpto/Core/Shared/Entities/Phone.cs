@@ -25,8 +25,9 @@ namespace Xpto.Core.Shared.Entities
         public override string ToString()
         {
             return $"({Ddd}) {Number.ToString().Substring(0, 4)}-{Number.ToString().Substring(5)}";
+                //$"{Ddd} {Number.ToString(@"00000-0000")}"; //não testei
         }
 
-        
+
     }
 }
