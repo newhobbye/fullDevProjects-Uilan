@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json;
 using Xpto.Core.Customers;
 
-#pragma warning disable CS8601
+#pragma warning disable CS8601 //perguntar o que é isso
 
 namespace Xpto.Core
 {
@@ -27,7 +27,7 @@ namespace Xpto.Core
         public static void Init()
         {
             var customerRepository = new CustomerRepository();
-            customerRepository.Load();
+            //customerRepository.Load();
 
             while (true)
             {

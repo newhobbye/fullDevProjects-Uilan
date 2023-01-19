@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,23 +13,23 @@ namespace Xpto.Core.Shared.Entities
         public Guid Id { get; set; }
         public string Type { get; set; }
 
-        [JsonPropertyName("logradouro")]
+        [JsonProperty("logradouro")]
         public string Street { get; set; }
         public string Number { get; set; }
 
-        [JsonPropertyName("complemento")]
+        [JsonProperty("complemento")]
         public string Complement { get; set; }
 
-        [JsonPropertyName("bairro")]
+        [JsonProperty("bairro")]
         public string District { get; set; }
 
-        [JsonPropertyName("localidade")]
+        [JsonProperty("localidade")]
         public string City { get; set; }
 
-        [JsonPropertyName("uf")]
+        [JsonProperty("uf")]
         public string State { get; set; }
 
-        [JsonPropertyName("cep")]
+        [JsonProperty("cep")]
         public string ZipCode { get; set; }
         public string Note { get; set; }
 

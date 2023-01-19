@@ -180,7 +180,7 @@ namespace Xpto.Core.Customers
                 }
             }
 
-            customer = await CreateAddress(customer);
+            customer = CreateAddress(customer);
             customer = CreatePhones(customer);
             customer = CreateEmails(customer);
 
@@ -386,7 +386,7 @@ namespace Xpto.Core.Customers
             }
         }
 
-        public async Task<Customer> CreateAddress(Customer customer)
+        public Customer CreateAddress(Customer customer)
         {
             int numberInputValidation = 0;
             bool resultInputValidation = false;
@@ -402,7 +402,7 @@ namespace Xpto.Core.Customers
                 Console.Write("CEP:");
                 tempZipCode = Console.ReadLine();
 
-                address = await zipFunction.GetAddressByZipCode(tempZipCode);
+                address = zipFunction.GetAddressByZipCode(tempZipCode);
 
                 if(address.Street != null)
                 {
