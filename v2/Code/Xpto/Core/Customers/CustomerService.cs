@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Xpto.Core.Shared.Entities;
@@ -128,6 +129,7 @@ namespace Xpto.Core.Customers
 
                     Console.WriteLine("Ações:");
                     Console.WriteLine("Pressione: 1 - Adicionar um endereço | 2 - Adicionar um telefone | 3 - Adicionar um E-mail");
+                    Console.WriteLine("Pressione: 4 - Editar endereços | 5 - Editar telefones | 6 - Adicionar E-mails");
                     Console.WriteLine("0 - Sair"); //VALIDAR DEPOIS INTERVALO ENTRE NUMEROS VALIDOS E NÃO USADOS
                     bool validAction = int.TryParse(Console.ReadLine(), out actionInCustomer);
 
@@ -136,6 +138,7 @@ namespace Xpto.Core.Customers
                         Console.WriteLine("Digito invalido!");
                         Console.WriteLine("Ações:");
                         Console.WriteLine("Pressione: 1 - Adicionar um endereço | 2 - Adicionar um telefone | 3 - Adicionar um E-mail");
+                        Console.WriteLine("Pressione: 4 - Editar endereços | 5 - Editar telefones | 6 - Editar E-mails");
                         Console.WriteLine("0 - Sair");
                         
                         validAction = int.TryParse(Console.ReadLine(), out actionInCustomer);
@@ -148,12 +151,24 @@ namespace Xpto.Core.Customers
                     else if(actionInCustomer == 2)
                     {
                         customer = CreatePhones(customer);
-
                     }
                     else if(actionInCustomer == 3)
                     {
                         customer = CreateEmails(customer);
-                    }else if(actionInCustomer == 0)
+                    }
+                    else if (actionInCustomer == 4)
+                    {
+                        customer = EditAddress(customer);
+                    }
+                    else if(actionInCustomer == 5)
+                    {
+                        customer = EditPhones(customer);
+                    }
+                    else if(actionInCustomer == 6)
+                    {
+                        customer = EditEmails(customer);
+                    }
+                    else if(actionInCustomer == 0)
                     {
                         break;
                     }
@@ -366,7 +381,7 @@ namespace Xpto.Core.Customers
                 Console.WriteLine();
                 Console.Write("Informe o código do cliente ou 0 para sair: ");
             }
-        }
+        } //revisar
 
         public void Delete()
         {
@@ -426,6 +441,7 @@ namespace Xpto.Core.Customers
             }
         }
 
+        #region[Manipulação de dados do cliente]
         public Customer CreateAddress(Customer customer)
         {
             int numberInputValidation = 0;
@@ -451,7 +467,6 @@ namespace Xpto.Core.Customers
                 }
                 else
                 {
-                    //address.ZipCode = Console.ReadLine();
                     Console.Write("Logradouro:");
                     address.Street = Console.ReadLine();
                     Console.Write("Número:");
@@ -557,5 +572,233 @@ namespace Xpto.Core.Customers
 
 
         }
+
+        public Customer EditAddress(Customer customer)
+        {
+
+            Console.WriteLine();
+            Console.WriteLine(("").PadRight(100, '-'));
+            Console.WriteLine();
+            var addresses = customer.Addresses;
+
+            if(addresses.Count == 1)
+            {
+                var address = addresses.FirstOrDefault();
+                Console.WriteLine("Endereço a ser editado:");
+                Console.WriteLine(address);
+                Console.WriteLine();
+                address = AuxiliaryEditAddress(address!);
+                customer.Addresses[0] = address;
+            }
+            else
+            {
+                Console.WriteLine("Estes são os endereços do cliente:");
+                Console.WriteLine();
+
+                for (int i = 0; i < addresses.Count; i++)
+                {
+                    Console.WriteLine("{0} - {1}", i + 1, addresses[i]);
+                }
+                Console.WriteLine();
+                Console.WriteLine("Digite o numero que corresponde ao endereço que gostaria de editar:");
+                int actionAddress = -1;
+                bool actionValidation = int.TryParse(Console.ReadLine(), out actionAddress);
+
+                while (actionValidation == false)
+                {
+                    Console.WriteLine("Digito invalido!");
+                    Console.WriteLine("Digite o numero que corresponde ao endereço que gostaria de editar:");
+                    actionValidation = int.TryParse(Console.ReadLine(), out actionAddress);
+
+                }
+
+                if(actionAddress < 0 || actionAddress > addresses.Count)
+                {
+                    Console.WriteLine("Este numero não corresponde a nenhum endereço!");
+                    return customer;
+                }
+                else
+                {
+                    var addressEdit = addresses[actionAddress - 1];
+                    addressEdit = AuxiliaryEditAddress(addressEdit!);
+                    customer.Addresses[actionAddress - 1] = addressEdit;
+
+                }
+
+                
+            }
+
+
+            return customer;
+        }
+
+        public Customer EditPhones(Customer customer)
+        {
+            Console.WriteLine();
+            Console.WriteLine(("").PadRight(100, '-'));
+            Console.WriteLine();
+            var phones = customer.Phones;
+
+            if (phones.Count == 1)
+            {
+                var phone = phones.FirstOrDefault();
+                Console.WriteLine("Telefone a ser editado:");
+                Console.WriteLine(phone);
+                Console.WriteLine();
+                phone = AuxiliaryEditPhone(phone);
+                customer.Phones[0] = phone; //perguntar pro uilan o que da pra fazer
+            }
+            else
+            {
+                Console.WriteLine("Estes são os telefones do cliente:");
+                Console.WriteLine();
+
+                for (int i = 0; i < phones.Count; i++)
+                {
+                    Console.WriteLine("{0} - {1}", i + 1, phones[i]);
+                }
+                Console.WriteLine();
+                Console.WriteLine("Digite o numero que corresponde ao telefone que gostaria de editar:");
+                int actionPhone = -1;
+                bool actionValidation = int.TryParse(Console.ReadLine(), out actionPhone);
+
+                while (actionValidation == false)
+                {
+                    Console.WriteLine("Digito invalido!");
+                    Console.WriteLine("Digite o numero que corresponde ao telefone que gostaria de editar:");
+                    actionValidation = int.TryParse(Console.ReadLine(), out actionPhone);
+
+                }
+
+                if (actionPhone < 0 || actionPhone > phones.Count)
+                {
+                    Console.WriteLine("Este numero não corresponde a nenhum telefone!");
+                    return customer;
+                }
+                else
+                {
+                    var phoneEdit = phones[actionPhone - 1];
+                    phoneEdit = AuxiliaryEditPhone(phoneEdit);
+                    customer.Phones[actionPhone - 1] = phoneEdit;
+
+                }
+
+
+            }
+
+            return customer;
+        }
+
+        public Customer EditEmails(Customer customer)
+        {
+            Console.WriteLine();
+            Console.WriteLine(("").PadRight(100, '-'));
+            Console.WriteLine();
+            var emails = customer.Emails;
+
+            if (emails.Count == 1)
+            {
+                var email = emails.FirstOrDefault();
+                Console.WriteLine("Email a ser editado:");
+                Console.WriteLine(email);
+                Console.WriteLine();
+                email = AuxiliaryEditEmail(email!);
+                customer.Emails[0] = email; 
+            }
+            else
+            {
+                Console.WriteLine("Estes são os E-mails do cliente:");
+                Console.WriteLine();
+
+                for (int i = 0; i < emails.Count; i++)
+                {
+                    Console.WriteLine("{0} - {1}", i + 1, emails[i]);
+                }
+                Console.WriteLine();
+                Console.WriteLine("Digite o numero que corresponde ao email que gostaria de editar:");
+                int actionEmail = -1;
+                bool actionValidation = int.TryParse(Console.ReadLine(), out actionEmail);
+
+                while (actionValidation == false)
+                {
+                    Console.WriteLine("Digito invalido!");
+                    Console.WriteLine("Digite o numero que corresponde ao email que gostaria de editar:");
+                    actionValidation = int.TryParse(Console.ReadLine(), out actionEmail);
+
+                }
+
+                if (actionEmail < 0 || actionEmail > emails.Count)
+                {
+                    Console.WriteLine("Este numero não corresponde a nenhum email!");
+                    return customer;
+                }
+                else
+                {
+                    var emailEdit = emails[actionEmail - 1];
+                    emailEdit = AuxiliaryEditEmail(emailEdit);
+                    customer.Emails[actionEmail - 1] = emailEdit;
+
+                }
+
+            }
+
+            return customer;
+        }
+
+        public Address AuxiliaryEditAddress(Address address)
+        {
+            var zipFunction = new ZipCodeFunction();
+
+            Console.Write("CEP:");
+            string tempZipCode = Console.ReadLine();
+
+            address = zipFunction.GetAddressByZipCode(tempZipCode);
+
+            if (address.Street != null)
+            {
+                Console.Write("Número:");
+                address.Number = Console.ReadLine();
+                Console.WriteLine();
+                Console.WriteLine("Endereço editado com sucesso!");
+            }
+            else
+            {
+                Console.Write("Logradouro:");
+                address.Street = Console.ReadLine();
+                Console.Write("Número:");
+                address.Number = Console.ReadLine();
+                Console.Write("Complemento:");
+                address.Complement = Console.ReadLine();
+                Console.Write("Bairro:");
+                address.District = Console.ReadLine();
+                Console.Write("Cidade:");
+                address.City = Console.ReadLine();
+                Console.Write("Estado:");
+                address.State = Console.ReadLine();
+                Console.WriteLine("Endereço editado com sucesso!");
+            }
+
+            return address;
+        }
+
+        public Phone AuxiliaryEditPhone(Phone phone)
+        {
+            Console.WriteLine();
+            Console.Write("Telefone com DDD:");
+            phone.Number = Convert.ToInt64(Console.ReadLine());
+            phone.SeparateDDDFromNumber();
+            Console.WriteLine("Telefone editado com sucesso!");
+            return phone;
+        }
+
+        public Email AuxiliaryEditEmail(Email email)
+        {
+            Console.Write("E-mail:");
+            email.Address = Console.ReadLine();
+            Console.WriteLine("E-mail cadastrado com sucesso");
+            return email;
+        }
+
+        #endregion
     }
 }
