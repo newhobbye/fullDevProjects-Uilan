@@ -55,15 +55,16 @@ namespace Xpto.Core.Customers
             Console.WriteLine("Consulta de Cliente");
             Console.WriteLine();
             Console.Write("Informe o código do cliente ou 0 para sair: ");
+            var repository = new CustomerRepository();
 
-            while (true) //volta pra ca
+            while (true) 
             {
                 int.TryParse(Console.ReadLine(), out var code);
 
                 if (code == 0)
                     return;
 
-                var customer = App.Customers.FirstOrDefault(x => x.Code == code);
+                var customer = App.Customers.FirstOrDefault(x => x.Code == code); //dá pra usar 
 
                 if (customer == null)
                 {
@@ -123,7 +124,44 @@ namespace Xpto.Core.Customers
                     Console.WriteLine("Observação: {0}", customer.Note);
                     Console.WriteLine(("").PadRight(100, '-'));
 
-                    Console.WriteLine("Pressione: 1 - Editar | 2 ");
+                    int actionInCustomer = -1;
+
+                    Console.WriteLine("Ações:");
+                    Console.WriteLine("Pressione: 1 - Adicionar um endereço | 2 - Adicionar um telefone | 3 - Adicionar um E-mail");
+                    Console.WriteLine("0 - Sair"); //VALIDAR DEPOIS INTERVALO ENTRE NUMEROS VALIDOS E NÃO USADOS
+                    bool validAction = int.TryParse(Console.ReadLine(), out actionInCustomer);
+
+                    while(validAction == false)
+                    {
+                        Console.WriteLine("Digito invalido!");
+                        Console.WriteLine("Ações:");
+                        Console.WriteLine("Pressione: 1 - Adicionar um endereço | 2 - Adicionar um telefone | 3 - Adicionar um E-mail");
+                        Console.WriteLine("0 - Sair");
+                        
+                        validAction = int.TryParse(Console.ReadLine(), out actionInCustomer);
+                    }
+
+                    if(actionInCustomer == 1)
+                    {
+                        customer = CreateAddress(customer);
+                    }
+                    else if(actionInCustomer == 2)
+                    {
+                        customer = CreatePhones(customer);
+
+                    }
+                    else if(actionInCustomer == 3)
+                    {
+                        customer = CreateEmails(customer);
+                    }else if(actionInCustomer == 0)
+                    {
+                        break;
+                    }
+
+                    App.Customers.Add(customer);
+                    repository.Save();
+
+
                 }
 
                 Console.WriteLine();
