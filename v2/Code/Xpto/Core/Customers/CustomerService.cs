@@ -56,7 +56,7 @@ namespace Xpto.Core.Customers
             Console.WriteLine();
             Console.Write("Informe o código do cliente ou 0 para sair: ");
 
-            while (true)
+            while (true) //volta pra ca
             {
                 int.TryParse(Console.ReadLine(), out var code);
 
@@ -122,10 +122,12 @@ namespace Xpto.Core.Customers
 
                     Console.WriteLine("Observação: {0}", customer.Note);
                     Console.WriteLine(("").PadRight(100, '-'));
+
+                    Console.WriteLine("Pressione: 1 - Editar | 2 ");
                 }
 
                 Console.WriteLine();
-                Console.Write("Informe o código do cliente ou 0 para sair: ");
+                Console.Write("Informe o código do cliente ou 0 para sair: "); 
             }
         }
 
@@ -394,7 +396,7 @@ namespace Xpto.Core.Customers
 
             do
             {
-                Console.Write("Endereço:");
+                Console.WriteLine("Endereço:");
 
                 var address = new Address();
                 string tempZipCode;
@@ -442,7 +444,7 @@ namespace Xpto.Core.Customers
                     } while (resultInputValidation == false);
                 }
 
-            } while (numberInputValidation != 1);
+            } while (numberInputValidation == 1);
 
             return customer;
         }
@@ -475,7 +477,7 @@ namespace Xpto.Core.Customers
                     } while (resultInputValidation == false);
                 }
 
-            } while (numberInputValidation != 1);
+            } while (numberInputValidation == 1);
 
             return customer;
 
@@ -510,7 +512,7 @@ namespace Xpto.Core.Customers
 
                 }
 
-            } while (numberInputValidation != 1);
+            } while (numberInputValidation == 1);
 
             return customer;
 

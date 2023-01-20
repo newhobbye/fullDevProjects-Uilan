@@ -27,7 +27,7 @@ namespace Xpto.Core
         public static void Init()
         {
             var customerRepository = new CustomerRepository();
-            //customerRepository.Load();
+            customerRepository.Load();
 
             while (true)
             {
