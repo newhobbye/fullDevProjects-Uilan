@@ -765,7 +765,7 @@ namespace Xpto.Core.Customers
             Console.WriteLine(("").PadRight(100, '-'));
             Console.WriteLine();
 
-            customer = GenericProcess(customer.Addresses, "Endereço", Operation.ADDRESS, customer);
+            customer = GenericProcessOfRemoveData(customer.Addresses, "Endereço", Operation.ADDRESS, customer);
 
             return customer;
         }
@@ -776,7 +776,7 @@ namespace Xpto.Core.Customers
             Console.WriteLine(("").PadRight(100, '-'));
             Console.WriteLine();
 
-            customer = GenericProcess(customer.Phones, "Telefone", Operation.PHONE, customer);
+            customer = GenericProcessOfRemoveData(customer.Phones, "Telefone", Operation.PHONE, customer);
 
             return customer;
         }
@@ -787,7 +787,7 @@ namespace Xpto.Core.Customers
             Console.WriteLine(("").PadRight(100, '-'));
             Console.WriteLine();
 
-            customer = GenericProcess(customer.Emails, "E-mail", Operation.EMAIL, customer);
+            customer = GenericProcessOfRemoveData(customer.Emails, "E-mail", Operation.EMAIL, customer);
 
             return customer;
         }
@@ -846,7 +846,88 @@ namespace Xpto.Core.Customers
             return email;
         }
 
-        public Customer GenericProcess<T>(IList<T> array, string operationName, Operation operation, Customer customer)
+        public Customer ProcessOfCreateData(Customer customer, Operation operation, string operationName)
+        {
+            int numberInputValidation = 0;
+            bool resultInputValidation = false;
+            var zipFunction = new ZipCodeFunction();
+
+            do
+            {
+                if (operation == Operation.ADDRESS)
+                {
+                    Console.WriteLine("Endereço:");
+
+                    var address = new Address();
+                    string tempZipCode;
+
+                    Console.Write("CEP:");
+                    tempZipCode = Console.ReadLine();
+
+                    address = zipFunction.GetAddressByZipCode(tempZipCode);
+
+                    if (address.Street != null)
+                    {
+                        Console.Write("Número:");
+                        address.Number = Console.ReadLine();
+                    }
+                    else
+                    {
+                        Console.Write("Logradouro:");
+                        address.Street = Console.ReadLine();
+                        Console.Write("Número:");
+                        address.Number = Console.ReadLine();
+                        Console.Write("Complemento:");
+                        address.Complement = Console.ReadLine();
+                        Console.Write("Bairro:");
+                        address.District = Console.ReadLine();
+                        Console.Write("Cidade:");
+                        address.City = Console.ReadLine();
+                        Console.Write("Estado:");
+                        address.State = Console.ReadLine();
+                    }
+
+                    customer.Addresses.Add(address);
+                    
+                }
+                else if(operation == Operation.PHONE)
+                {
+                    Console.Write("Telefone com DDD:");
+
+                    var phone = new Phone();
+                    phone.Number = Convert.ToInt64(Console.ReadLine());
+                    phone.SeparateDDDFromNumber();
+                    customer.Phones.Add(phone);
+                }
+                else if (operation == Operation.EMAIL)
+                {
+                    Console.Write("E-mail:");
+
+                    var email = new Email();
+                    email.Address = Console.ReadLine();
+                    customer.Emails.Add(email);
+                }
+
+                Console.WriteLine($"Deseja cadastrar outro {operationName.ToLower()}? Digite: 1 - Sim, Qualquer numero - Não");
+                resultInputValidation = int.TryParse(Console.ReadLine(), out numberInputValidation);
+
+                if (resultInputValidation == false)
+                {
+                    do
+                    {
+                        Console.WriteLine("Digito invalido! Favor digitar novamente.");
+                        Console.WriteLine($"Deseja cadastrar outro {operationName.ToLower()}? Digite: 1 - Sim, Qualquer numero - Não");
+                        resultInputValidation = int.TryParse(Console.ReadLine(), out numberInputValidation);
+
+                    } while (resultInputValidation == false);
+                }
+
+            } while (numberInputValidation == 1);
+
+            return customer;
+        }
+
+        public Customer GenericProcessOfRemoveData<T>(IList<T> array, string operationName, Operation operation, Customer customer)
         {
             if (array.Count == 1)
             {
