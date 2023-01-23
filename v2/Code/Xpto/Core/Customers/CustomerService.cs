@@ -458,93 +458,14 @@ namespace Xpto.Core.Customers
         #region[Manipulação de dados do cliente]
         public Customer CreateAddress(Customer customer)
         {
-            int numberInputValidation = 0;
-            bool resultInputValidation = false;
-            var zipFunction = new ZipCodeFunction();
-
-            do
-            {
-                Console.WriteLine("Endereço:");
-
-                var address = new Address();
-                string tempZipCode;
-
-                Console.Write("CEP:");
-                tempZipCode = Console.ReadLine();
-
-                address = zipFunction.GetAddressByZipCode(tempZipCode);
-
-                if(address.Street != null)
-                {
-                    Console.Write("Número:");
-                    address.Number = Console.ReadLine();
-                }
-                else
-                {
-                    Console.Write("Logradouro:");
-                    address.Street = Console.ReadLine();
-                    Console.Write("Número:");
-                    address.Number = Console.ReadLine();
-                    Console.Write("Complemento:");
-                    address.Complement = Console.ReadLine();
-                    Console.Write("Bairro:");
-                    address.District = Console.ReadLine();
-                    Console.Write("Cidade:");
-                    address.City = Console.ReadLine();
-                    Console.Write("Estado:");
-                    address.State = Console.ReadLine();
-                }
-
-                customer.Addresses.Add(address);
-
-                Console.WriteLine("Deseja cadastrar outro endereço? Digite: 1 - Sim, Qualquer numero - Não");
-                resultInputValidation = int.TryParse(Console.ReadLine(), out numberInputValidation);
-
-                if (resultInputValidation == false)
-                {
-                    do
-                    {
-                        Console.WriteLine("Digito invalido! Favor digitar novamente.");
-                        Console.WriteLine("Deseja cadastrar outro endereço? Digite: 1 - Sim, Qualquer numero - Não");
-                        resultInputValidation = int.TryParse(Console.ReadLine(), out numberInputValidation);
-
-                    } while (resultInputValidation == false);
-                }
-
-            } while (numberInputValidation == 1);
+            customer = ProcessOfCreateData(customer, Operation.ADDRESS, "Endereço");
 
             return customer;
         }
 
         public Customer CreatePhones(Customer customer)
         {
-            int numberInputValidation = 0;
-            bool resultInputValidation = false;
-
-            do
-            {
-                Console.Write("Telefone com DDD:");
-
-                var phone = new Phone();
-                phone.Number = Convert.ToInt64(Console.ReadLine());
-                phone.SeparateDDDFromNumber();
-                customer.Phones.Add(phone);
-
-                Console.WriteLine("Deseja cadastrar outro numero? Digite: 1 - Sim, Qualquer numero - Não");
-                resultInputValidation = int.TryParse(Console.ReadLine(), out numberInputValidation);
-
-                if (resultInputValidation == false)
-                {
-                    do
-                    {
-                        Console.WriteLine("Digito invalido! Favor digitar novamente.");
-                        Console.WriteLine("Deseja cadastrar outro numero? Digite: 1 - Sim, Qualquer numero - Não");
-                        resultInputValidation = int.TryParse(Console.ReadLine(), out numberInputValidation);
-
-                    } while (resultInputValidation == false);
-                }
-
-            } while (numberInputValidation == 1);
+            customer = ProcessOfCreateData(customer, Operation.PHONE, "Telefone");
 
             return customer;
 
@@ -552,38 +473,9 @@ namespace Xpto.Core.Customers
 
         public Customer CreateEmails(Customer customer)
         {
-
-            int numberInputValidation = 0;
-            bool resultInputValidation = false;
-
-            do
-            {
-                Console.Write("E-mail:");
-
-                var email = new Email();
-                email.Address = Console.ReadLine();
-                customer.Emails.Add(email);
-
-                Console.WriteLine("Deseja cadastrar outro e-mail? Digite: 1 - Sim, Qualquer numero - Não");
-                resultInputValidation = int.TryParse(Console.ReadLine(), out numberInputValidation);
-
-                if (resultInputValidation == false)
-                {
-                    do
-                    {
-                        Console.WriteLine("Digito invalido! Favor digitar novamente.");
-                        Console.WriteLine("Deseja cadastrar outro e-mail? Digite: 1 - Sim, Qualquer numero - Não");
-                        resultInputValidation = int.TryParse(Console.ReadLine(), out numberInputValidation);
-
-                    } while (resultInputValidation == false);
-
-                }
-
-            } while (numberInputValidation == 1);
+            customer = ProcessOfCreateData(customer, Operation.EMAIL, "E-mail");
 
             return customer;
-
-
 
         }
 
@@ -923,6 +815,93 @@ namespace Xpto.Core.Customers
                 }
 
             } while (numberInputValidation == 1);
+
+            return customer;
+        }
+
+        public Customer GenericProcessOfEditData<T>(IList<T> array, string operationName, Operation operation, Customer customer)
+        {
+
+            if (array.Count == 1)
+            {
+                T data = array.FirstOrDefault();
+
+                Console.WriteLine($"{operationName} a ser editado:");
+                Console.WriteLine(data);
+                Console.WriteLine();
+                if(operation == Operation.ADDRESS)
+                {
+                    var address = data as Address;
+                    address = AuxiliaryEditAddress(address!); 
+                    customer.Addresses[0] = address;
+                }
+                else if(operation == Operation.PHONE)
+                {
+                    var phone = data as Phone;
+                    phone = AuxiliaryEditPhone(phone!);
+                    customer.Phones[0] = phone;
+                }
+                else if(operation == Operation.EMAIL)
+                {
+                    var email = data as Email;
+                    email = AuxiliaryEditEmail(email!);
+                    customer.Emails[0] = email;
+                }
+
+            }
+            else
+            {
+                Console.WriteLine($"Estes são os {operationName.ToLower()}s do cliente:");
+                Console.WriteLine();
+
+                for (int i = 0; i < array.Count; i++)
+                {
+                    Console.WriteLine("{0} - {1}", i + 1, array[i]);
+                }
+                Console.WriteLine();
+                Console.WriteLine($"Digite o numero que corresponde ao {operationName.ToLower()} que gostaria de editar:");
+                int actionNumber = -1;
+                bool actionValidation = int.TryParse(Console.ReadLine(), out actionNumber);
+
+                while (actionValidation == false)
+                {
+                    Console.WriteLine("Digito invalido!");
+                    Console.WriteLine($"Digite o numero que corresponde ao {operationName.ToLower()} que gostaria de editar:");
+                    actionValidation = int.TryParse(Console.ReadLine(), out actionNumber);
+
+                }
+
+                if (actionNumber < 0 || actionNumber > array.Count)
+                {
+                    Console.WriteLine($"Este numero não corresponde a nenhum {operationName.ToLower()}!");
+                    return customer;
+                }
+                else
+                {
+                    var dataEdit = array[actionNumber - 1];
+
+                    if (operation == Operation.ADDRESS)
+                    {
+                        var address = dataEdit as Address;
+                        address = AuxiliaryEditAddress(address!);
+                        customer.Addresses[actionNumber - 1] = address;
+                    }
+                    else if (operation == Operation.PHONE)
+                    {
+                        var phone = dataEdit as Phone;
+                        phone = AuxiliaryEditPhone(phone!);
+                        customer.Phones[actionNumber - 1] = phone;
+                    }
+                    else if (operation == Operation.EMAIL)
+                    {
+                        var email = dataEdit as Email;
+                        email = AuxiliaryEditEmail(email!);
+                        customer.Emails[actionNumber - 1] = email;
+                    }
+
+                }
+
+            }
 
             return customer;
         }
