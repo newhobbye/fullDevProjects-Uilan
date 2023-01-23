@@ -65,7 +65,7 @@ namespace Xpto.Core.Customers
                 if (code == 0)
                     return;
 
-                var customer = App.Customers.FirstOrDefault(x => x.Code == code); //dá pra usar 
+                var customer = App.Customers.FirstOrDefault(x => x.Code == code); 
 
                 if (customer == null)
                 {
@@ -130,6 +130,7 @@ namespace Xpto.Core.Customers
                     Console.WriteLine("Ações:");
                     Console.WriteLine("Pressione: 1 - Adicionar um endereço | 2 - Adicionar um telefone | 3 - Adicionar um E-mail");
                     Console.WriteLine("Pressione: 4 - Editar endereços | 5 - Editar telefones | 6 - Adicionar E-mails");
+                    Console.WriteLine("Pressione: 7 - Remover endereços | 8 - Remover telefones | 9 - Remover E-mails");
                     Console.WriteLine("0 - Sair"); //VALIDAR DEPOIS INTERVALO ENTRE NUMEROS VALIDOS E NÃO USADOS
                     bool validAction = int.TryParse(Console.ReadLine(), out actionInCustomer);
 
@@ -145,7 +146,7 @@ namespace Xpto.Core.Customers
                         validAction = int.TryParse(Console.ReadLine(), out actionInCustomer);
                     }
 
-                    if(actionInCustomer == 1)
+                    if(actionInCustomer == 1) //melhorar
                     {
                         customer = CreateAddress(customer);
                     }
@@ -168,6 +169,18 @@ namespace Xpto.Core.Customers
                     else if(actionInCustomer == 6)
                     {
                         customer = EditEmails(customer);
+                    }
+                    else if(actionInCustomer == 7)
+                    {
+                        customer = RemoveAdrress(customer);
+                    }
+                    else if (actionInCustomer == 8)
+                    {
+                        customer = RemovePhones(customer);
+                    }
+                    else if (actionInCustomer == 9)
+                    {
+                        customer = RemoveEmails(customer);
                     }
                     else if(actionInCustomer == 0)
                     {
@@ -774,7 +787,7 @@ namespace Xpto.Core.Customers
 
                 if(actionDecicion == 1)
                 {
-                    customer.Addresses.RemoveAt(0);
+                    customer.Addresses.RemoveAt(0); 
                     Console.WriteLine("Enndereço removido!");
 
                 }
@@ -785,7 +798,7 @@ namespace Xpto.Core.Customers
                 }
                 else if(actionDecicion == 2)
                 {
-                    Console.WriteLine("Operação cancelada.");
+                    Console.WriteLine("Operação cancelada!");
                     Console.WriteLine();
                     return customer;
                 }
@@ -822,7 +835,163 @@ namespace Xpto.Core.Customers
             }
 
             return customer;
-        } //não testado
+        }
+
+        public Customer RemovePhones(Customer customer)
+        {
+            Console.WriteLine();
+            Console.WriteLine(("").PadRight(100, '-'));
+            Console.WriteLine();
+
+            var phones = customer.Phones;
+
+            if (phones.Count == 1)
+            {
+                Console.WriteLine("Tem certeza que quer remover este telefone?");
+                Console.WriteLine(phones[0]);
+
+                Console.WriteLine("1 - Sim | 2 - Não");
+                int actionDecicion = -1;
+                bool actionValidation = int.TryParse(Console.ReadLine(), out actionDecicion);
+
+                while (actionValidation == false)
+                {
+                    Console.WriteLine("Digito invalido!");
+                    Console.WriteLine("Tem certeza que quer remover este telefone?");
+                    Console.WriteLine("1 - Sim | 2 - Não");
+                    actionValidation = int.TryParse(Console.ReadLine(), out actionDecicion);
+
+                }
+
+                if (actionDecicion == 1)
+                {
+                    customer.Phones.RemoveAt(0);
+                    Console.WriteLine("Telefone removido!");
+
+                }
+                else if (actionDecicion < 0 || actionDecicion > phones.Count)
+                {
+                    Console.WriteLine("Este numero não corresponde a nenhuma ação.");
+                    return customer;
+                }
+                else if (actionDecicion == 2)
+                {
+                    Console.WriteLine("Operação cancelada!");
+                    Console.WriteLine();
+                    return customer;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Telefone disponiveis para remoção:");
+
+                for (int i = 0; i < phones.Count; i++)
+                {
+                    Console.WriteLine("{0} - {1}", i + 1, phones[i]);
+                }
+
+                Console.WriteLine("Digite o numero referente ao telefone que gostaria de remover: ");
+                int numberDecision = -1;
+                bool validationAction = int.TryParse(Console.ReadLine(), out numberDecision);
+
+                while (validationAction == false)
+                {
+                    Console.WriteLine("Digito invalido!");
+                    Console.WriteLine("Digite o numero referente ao telefone que gostaria de remover: ");
+                    validationAction = int.TryParse(Console.ReadLine(), out numberDecision);
+                }
+
+                if (numberDecision < 0 || numberDecision > phones.Count)
+                {
+                    Console.WriteLine("Este numero não corresponde a nenhum telefone!");
+                    return customer;
+                }
+
+                customer.Phones.RemoveAt(numberDecision - 1);
+                Console.WriteLine("Telefone removido!");
+
+            }
+
+            return customer;
+        }
+
+        public Customer RemoveEmails(Customer customer)
+        {
+            Console.WriteLine();
+            Console.WriteLine(("").PadRight(100, '-'));
+            Console.WriteLine();
+
+            var emails = customer.Emails;
+
+            if (emails.Count == 1)
+            {
+                Console.WriteLine("Tem certeza que quer remover este e-mail?");
+                Console.WriteLine(emails[0]);
+                Console.WriteLine();
+                Console.WriteLine("1 - Sim | 2 - Não");
+                int actionDecicion = -1;
+                bool actionValidation = int.TryParse(Console.ReadLine(), out actionDecicion);
+
+                while (actionValidation == false)
+                {
+                    Console.WriteLine("Digito invalido!");
+                    Console.WriteLine("Tem certeza que quer remover este e-mail?");
+                    Console.WriteLine("1 - Sim | 2 - Não");
+                    actionValidation = int.TryParse(Console.ReadLine(), out actionDecicion);
+
+                }
+
+                if (actionDecicion == 1)
+                {
+                    customer.Emails.RemoveAt(0);
+                    Console.WriteLine("E-mail removido!");
+
+                }
+                else if (actionDecicion < 0 || actionDecicion > emails.Count)
+                {
+                    Console.WriteLine("Este numero não corresponde a nenhuma ação.");
+                    return customer;
+                }
+                else if (actionDecicion == 2)
+                {
+                    Console.WriteLine("Operação cancelada!");
+                    Console.WriteLine();
+                    return customer;
+                }
+            }
+            else
+            {
+                Console.WriteLine("E-mails disponiveis para remoção:");
+
+                for (int i = 0; i < emails.Count; i++)
+                {
+                    Console.WriteLine("{0} - {1}", i + 1, emails[i]);
+                }
+
+                Console.WriteLine("Digite o numero referente ao e-mail que gostaria de remover: ");
+                int numberDecision = -1;
+                bool validationAction = int.TryParse(Console.ReadLine(), out numberDecision);
+
+                while (validationAction == false)
+                {
+                    Console.WriteLine("Digito invalido!");
+                    Console.WriteLine("Digite o numero referente ao e-mail que gostaria de remover: ");
+                    validationAction = int.TryParse(Console.ReadLine(), out numberDecision);
+                }
+
+                if (numberDecision < 0 || numberDecision > emails.Count)
+                {
+                    Console.WriteLine("Este numero não corresponde a nenhum email!");
+                    return customer;
+                }
+
+                customer.Emails.RemoveAt(numberDecision - 1);
+                Console.WriteLine("E-mail removido!");
+
+            }
+
+            return customer;
+        }
 
         public Address AuxiliaryEditAddress(Address address)
         {
