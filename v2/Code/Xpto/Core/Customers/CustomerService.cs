@@ -485,55 +485,8 @@ namespace Xpto.Core.Customers
             Console.WriteLine();
             Console.WriteLine(("").PadRight(100, '-'));
             Console.WriteLine();
-            var addresses = customer.Addresses;
 
-            if(addresses.Count == 1)
-            {
-                var address = addresses.FirstOrDefault();
-                Console.WriteLine("Endereço a ser editado:");
-                Console.WriteLine(address);
-                Console.WriteLine();
-                address = AuxiliaryEditAddress(address!);
-                customer.Addresses[0] = address;
-            }
-            else
-            {
-                Console.WriteLine("Estes são os endereços do cliente:");
-                Console.WriteLine();
-
-                for (int i = 0; i < addresses.Count; i++)
-                {
-                    Console.WriteLine("{0} - {1}", i + 1, addresses[i]);
-                }
-                Console.WriteLine();
-                Console.WriteLine("Digite o numero que corresponde ao endereço que gostaria de editar:");
-                int actionAddress = -1;
-                bool actionValidation = int.TryParse(Console.ReadLine(), out actionAddress);
-
-                while (actionValidation == false)
-                {
-                    Console.WriteLine("Digito invalido!");
-                    Console.WriteLine("Digite o numero que corresponde ao endereço que gostaria de editar:");
-                    actionValidation = int.TryParse(Console.ReadLine(), out actionAddress);
-
-                }
-
-                if(actionAddress < 0 || actionAddress > addresses.Count)
-                {
-                    Console.WriteLine("Este numero não corresponde a nenhum endereço!");
-                    return customer;
-                }
-                else
-                {
-                    var addressEdit = addresses[actionAddress - 1];
-                    addressEdit = AuxiliaryEditAddress(addressEdit!);
-                    customer.Addresses[actionAddress - 1] = addressEdit;
-
-                }
-
-                
-            }
-
+            customer = GenericProcessOfEditData(customer.Addresses, "Endereço", Operation.ADDRESS, customer);
 
             return customer;
         }
@@ -543,54 +496,8 @@ namespace Xpto.Core.Customers
             Console.WriteLine();
             Console.WriteLine(("").PadRight(100, '-'));
             Console.WriteLine();
-            var phones = customer.Phones;
 
-            if (phones.Count == 1)
-            {
-                var phone = phones.FirstOrDefault();
-                Console.WriteLine("Telefone a ser editado:");
-                Console.WriteLine(phone);
-                Console.WriteLine();
-                phone = AuxiliaryEditPhone(phone);
-                customer.Phones[0] = phone; //perguntar pro uilan o que da pra fazer
-            }
-            else
-            {
-                Console.WriteLine("Estes são os telefones do cliente:");
-                Console.WriteLine();
-
-                for (int i = 0; i < phones.Count; i++)
-                {
-                    Console.WriteLine("{0} - {1}", i + 1, phones[i]);
-                }
-                Console.WriteLine();
-                Console.WriteLine("Digite o numero que corresponde ao telefone que gostaria de editar:");
-                int actionPhone = -1;
-                bool actionValidation = int.TryParse(Console.ReadLine(), out actionPhone);
-
-                while (actionValidation == false)
-                {
-                    Console.WriteLine("Digito invalido!");
-                    Console.WriteLine("Digite o numero que corresponde ao telefone que gostaria de editar:");
-                    actionValidation = int.TryParse(Console.ReadLine(), out actionPhone);
-
-                }
-
-                if (actionPhone < 0 || actionPhone > phones.Count)
-                {
-                    Console.WriteLine("Este numero não corresponde a nenhum telefone!");
-                    return customer;
-                }
-                else
-                {
-                    var phoneEdit = phones[actionPhone - 1];
-                    phoneEdit = AuxiliaryEditPhone(phoneEdit);
-                    customer.Phones[actionPhone - 1] = phoneEdit;
-
-                }
-
-
-            }
+            customer = GenericProcessOfEditData(customer.Phones, "Telefone", Operation.PHONE, customer);
 
             return customer;
         }
@@ -600,53 +507,8 @@ namespace Xpto.Core.Customers
             Console.WriteLine();
             Console.WriteLine(("").PadRight(100, '-'));
             Console.WriteLine();
-            var emails = customer.Emails;
 
-            if (emails.Count == 1)
-            {
-                var email = emails.FirstOrDefault();
-                Console.WriteLine("Email a ser editado:");
-                Console.WriteLine(email);
-                Console.WriteLine();
-                email = AuxiliaryEditEmail(email!);
-                customer.Emails[0] = email; 
-            }
-            else
-            {
-                Console.WriteLine("Estes são os E-mails do cliente:");
-                Console.WriteLine();
-
-                for (int i = 0; i < emails.Count; i++)
-                {
-                    Console.WriteLine("{0} - {1}", i + 1, emails[i]);
-                }
-                Console.WriteLine();
-                Console.WriteLine("Digite o numero que corresponde ao email que gostaria de editar:");
-                int actionEmail = -1;
-                bool actionValidation = int.TryParse(Console.ReadLine(), out actionEmail);
-
-                while (actionValidation == false)
-                {
-                    Console.WriteLine("Digito invalido!");
-                    Console.WriteLine("Digite o numero que corresponde ao email que gostaria de editar:");
-                    actionValidation = int.TryParse(Console.ReadLine(), out actionEmail);
-
-                }
-
-                if (actionEmail < 0 || actionEmail > emails.Count)
-                {
-                    Console.WriteLine("Este numero não corresponde a nenhum email!");
-                    return customer;
-                }
-                else
-                {
-                    var emailEdit = emails[actionEmail - 1];
-                    emailEdit = AuxiliaryEditEmail(emailEdit);
-                    customer.Emails[actionEmail - 1] = emailEdit;
-
-                }
-
-            }
+            customer = GenericProcessOfEditData(customer.Emails, "E-mail", Operation.EMAIL, customer);
 
             return customer;
         }

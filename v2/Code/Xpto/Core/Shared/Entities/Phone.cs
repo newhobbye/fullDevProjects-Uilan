@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Reflection.Emit;
+using System.Text.RegularExpressions;
 
 namespace Xpto.Core.Shared.Entities
 {
@@ -18,14 +19,16 @@ namespace Xpto.Core.Shared.Entities
 
         public void SeparateDDDFromNumber()
         {
-            Ddd = int.Parse(Number.ToString()[..1]); //substring
-            Number = long.Parse(Number.ToString()[2..]);
+            string pattern = @"(\d{2})(\d{4,5})(\d{4})";
+
+            var regex = new Regex(pattern);
+            Ddd = int.Parse(regex.Replace(Number.ToString(), "$1"));
+            Number = long.Parse(regex.Replace(Number.ToString(), "$2$3"));
         }
 
         public override string ToString()
         {
-            return $"({Ddd}) {Number.ToString().Substring(0, 4)}-{Number.ToString().Substring(5)}";
-                //$"{Ddd} {Number.ToString(@"00000-0000")}"; //não testei
+            return $"({Ddd}) {Number}"; //perguntar pro Uilan
         }
 
 
