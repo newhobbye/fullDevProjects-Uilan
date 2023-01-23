@@ -765,74 +765,7 @@ namespace Xpto.Core.Customers
             Console.WriteLine(("").PadRight(100, '-'));
             Console.WriteLine();
 
-            var addresses = customer.Addresses;
-
-            if(addresses.Count == 1)
-            {
-                Console.WriteLine("Tem certeza que quer remover este endereço?");
-                Console.WriteLine(addresses[0]);
-
-                Console.WriteLine("1 - Sim | 2 - Não");
-                int actionDecicion = -1;
-                bool actionValidation = int.TryParse(Console.ReadLine(), out actionDecicion);
-
-                while (actionValidation == false)
-                {
-                    Console.WriteLine("Digito invalido!");
-                    Console.WriteLine("Tem certeza que quer remover este endereço?");
-                    Console.WriteLine("1 - Sim | 2 - Não");
-                    actionValidation = int.TryParse(Console.ReadLine(), out actionDecicion);
-
-                }
-
-                if(actionDecicion == 1)
-                {
-                    customer.Addresses.RemoveAt(0); 
-                    Console.WriteLine("Enndereço removido!");
-
-                }
-                else if(actionDecicion < 0 || actionDecicion > addresses.Count)
-                {
-                    Console.WriteLine("Este numero não corresponde a nenhuma ação.");
-                    return customer;
-                }
-                else if(actionDecicion == 2)
-                {
-                    Console.WriteLine("Operação cancelada!");
-                    Console.WriteLine();
-                    return customer;
-                }
-            }
-            else
-            {
-                Console.WriteLine("Endereços disponiveis para remoção:");
-
-                for (int i = 0; i < addresses.Count; i++)
-                {
-                    Console.WriteLine("{0} - {1}", i+1, addresses[i]);
-                }
-
-                Console.WriteLine("Digite o numero referente ao endereço que gostaria de remover: ");
-                int numberDecision = -1;
-                bool validationAction = int.TryParse(Console.ReadLine(), out numberDecision);
-
-                while (validationAction == false)
-                {
-                    Console.WriteLine("Digito invalido!");
-                    Console.WriteLine("Digite o numero referente ao endereço que gostaria de remover: ");
-                    validationAction = int.TryParse(Console.ReadLine(), out numberDecision);
-                }
-
-                if(numberDecision < 0 || numberDecision > addresses.Count)
-                {
-                    Console.WriteLine("Este numero não corresponde a nenhum endereço!");
-                    return customer;
-                }
-
-                customer.Addresses.RemoveAt(numberDecision - 1);
-                Console.WriteLine("Enndereço removido!");
-
-            }
+            customer = GenericProcess(customer.Addresses, "Endereço", Operation.ADDRESS, customer);
 
             return customer;
         }
@@ -843,74 +776,7 @@ namespace Xpto.Core.Customers
             Console.WriteLine(("").PadRight(100, '-'));
             Console.WriteLine();
 
-            var phones = customer.Phones;
-
-            if (phones.Count == 1)
-            {
-                Console.WriteLine("Tem certeza que quer remover este telefone?");
-                Console.WriteLine(phones[0]);
-
-                Console.WriteLine("1 - Sim | 2 - Não");
-                int actionDecicion = -1;
-                bool actionValidation = int.TryParse(Console.ReadLine(), out actionDecicion);
-
-                while (actionValidation == false)
-                {
-                    Console.WriteLine("Digito invalido!");
-                    Console.WriteLine("Tem certeza que quer remover este telefone?");
-                    Console.WriteLine("1 - Sim | 2 - Não");
-                    actionValidation = int.TryParse(Console.ReadLine(), out actionDecicion);
-
-                }
-
-                if (actionDecicion == 1)
-                {
-                    customer.Phones.RemoveAt(0);
-                    Console.WriteLine("Telefone removido!");
-
-                }
-                else if (actionDecicion < 0 || actionDecicion > phones.Count)
-                {
-                    Console.WriteLine("Este numero não corresponde a nenhuma ação.");
-                    return customer;
-                }
-                else if (actionDecicion == 2)
-                {
-                    Console.WriteLine("Operação cancelada!");
-                    Console.WriteLine();
-                    return customer;
-                }
-            }
-            else
-            {
-                Console.WriteLine("Telefone disponiveis para remoção:");
-
-                for (int i = 0; i < phones.Count; i++)
-                {
-                    Console.WriteLine("{0} - {1}", i + 1, phones[i]);
-                }
-
-                Console.WriteLine("Digite o numero referente ao telefone que gostaria de remover: ");
-                int numberDecision = -1;
-                bool validationAction = int.TryParse(Console.ReadLine(), out numberDecision);
-
-                while (validationAction == false)
-                {
-                    Console.WriteLine("Digito invalido!");
-                    Console.WriteLine("Digite o numero referente ao telefone que gostaria de remover: ");
-                    validationAction = int.TryParse(Console.ReadLine(), out numberDecision);
-                }
-
-                if (numberDecision < 0 || numberDecision > phones.Count)
-                {
-                    Console.WriteLine("Este numero não corresponde a nenhum telefone!");
-                    return customer;
-                }
-
-                customer.Phones.RemoveAt(numberDecision - 1);
-                Console.WriteLine("Telefone removido!");
-
-            }
+            customer = GenericProcess(customer.Phones, "Telefone", Operation.PHONE, customer);
 
             return customer;
         }
@@ -921,74 +787,7 @@ namespace Xpto.Core.Customers
             Console.WriteLine(("").PadRight(100, '-'));
             Console.WriteLine();
 
-            var emails = customer.Emails;
-
-            if (emails.Count == 1)
-            {
-                Console.WriteLine("Tem certeza que quer remover este e-mail?");
-                Console.WriteLine(emails[0]);
-                Console.WriteLine();
-                Console.WriteLine("1 - Sim | 2 - Não");
-                int actionDecicion = -1;
-                bool actionValidation = int.TryParse(Console.ReadLine(), out actionDecicion);
-
-                while (actionValidation == false)
-                {
-                    Console.WriteLine("Digito invalido!");
-                    Console.WriteLine("Tem certeza que quer remover este e-mail?");
-                    Console.WriteLine("1 - Sim | 2 - Não");
-                    actionValidation = int.TryParse(Console.ReadLine(), out actionDecicion);
-
-                }
-
-                if (actionDecicion == 1)
-                {
-                    customer.Emails.RemoveAt(0);
-                    Console.WriteLine("E-mail removido!");
-
-                }
-                else if (actionDecicion < 0 || actionDecicion > emails.Count)
-                {
-                    Console.WriteLine("Este numero não corresponde a nenhuma ação.");
-                    return customer;
-                }
-                else if (actionDecicion == 2)
-                {
-                    Console.WriteLine("Operação cancelada!");
-                    Console.WriteLine();
-                    return customer;
-                }
-            }
-            else
-            {
-                Console.WriteLine("E-mails disponiveis para remoção:");
-
-                for (int i = 0; i < emails.Count; i++)
-                {
-                    Console.WriteLine("{0} - {1}", i + 1, emails[i]);
-                }
-
-                Console.WriteLine("Digite o numero referente ao e-mail que gostaria de remover: ");
-                int numberDecision = -1;
-                bool validationAction = int.TryParse(Console.ReadLine(), out numberDecision);
-
-                while (validationAction == false)
-                {
-                    Console.WriteLine("Digito invalido!");
-                    Console.WriteLine("Digite o numero referente ao e-mail que gostaria de remover: ");
-                    validationAction = int.TryParse(Console.ReadLine(), out numberDecision);
-                }
-
-                if (numberDecision < 0 || numberDecision > emails.Count)
-                {
-                    Console.WriteLine("Este numero não corresponde a nenhum email!");
-                    return customer;
-                }
-
-                customer.Emails.RemoveAt(numberDecision - 1);
-                Console.WriteLine("E-mail removido!");
-
-            }
+            customer = GenericProcess(customer.Emails, "E-mail", Operation.EMAIL, customer);
 
             return customer;
         }
@@ -1045,6 +844,108 @@ namespace Xpto.Core.Customers
             email.Address = Console.ReadLine();
             Console.WriteLine("E-mail cadastrado com sucesso");
             return email;
+        }
+
+        public Customer GenericProcess<T>(IList<T> array, string operationName, Operation operation, Customer customer)
+        {
+            if (array.Count == 1)
+            {
+                Console.WriteLine($"Tem certeza que quer remover este {operationName.ToLower()}?");
+                Console.WriteLine(array[0]);
+
+                Console.WriteLine("1 - Sim | 2 - Não");
+                int actionDecicion = -1;
+                bool actionValidation = int.TryParse(Console.ReadLine(), out actionDecicion);
+
+                while (actionValidation == false)
+                {
+                    Console.WriteLine("Digito invalido!");
+                    Console.WriteLine($"Tem certeza que quer remover este {operationName.ToLower()}?");
+                    Console.WriteLine("1 - Sim | 2 - Não");
+                    actionValidation = int.TryParse(Console.ReadLine(), out actionDecicion);
+
+                }
+
+                if (actionDecicion == 1)
+                {
+                    if (operation == Operation.ADDRESS)
+                    {
+                        customer.Addresses.RemoveAt(0);
+                        Console.WriteLine($"{operationName} removido!");
+                    }
+                    else if(operation == Operation.PHONE) 
+                    {
+                        customer.Phones.RemoveAt(0);
+                        Console.WriteLine($"{operationName} removido!");
+                    }
+                    else if (operation == Operation.EMAIL)
+                    {
+                        customer.Phones.RemoveAt(0);
+                        Console.WriteLine($"{operationName} removido!");
+                    }
+                    
+                    return customer;
+
+                }
+                else if (actionDecicion < 0 || actionDecicion > array.Count)
+                {
+                    Console.WriteLine("Este numero não corresponde a nenhuma ação.");
+                    return customer;
+                }
+                else if (actionDecicion == 2)
+                {
+                    Console.WriteLine("Operação cancelada!");
+                    Console.WriteLine();
+                    return customer;
+                }
+            }
+            else
+            {
+                Console.WriteLine($"{operationName}s disponiveis para remoção:");
+
+                for (int i = 0; i < array.Count; i++)
+                {
+                    Console.WriteLine("{0} - {1}", i + 1, array[i]);
+                }
+
+                Console.WriteLine($"Digite o numero referente ao {operationName.ToLower()} que gostaria de remover: ");
+                int numberDecision = -1;
+                bool validationAction = int.TryParse(Console.ReadLine(), out numberDecision);
+
+                while (validationAction == false)
+                {
+                    Console.WriteLine("Digito invalido!");
+                    Console.WriteLine($"Digite o numero referente ao {operationName.ToLower()} que gostaria de remover: ");
+                    validationAction = int.TryParse(Console.ReadLine(), out numberDecision);
+                }
+
+                if (numberDecision < 0 || numberDecision > array.Count)
+                {
+                    Console.WriteLine($"Este numero não corresponde a nenhum {operationName.ToLower()}!");
+                    return customer;
+                }
+
+                if (operation == Operation.ADDRESS)
+                {
+                    customer.Addresses.RemoveAt(numberDecision - 1);
+                    Console.WriteLine($"{operationName} removido!");
+                }
+                else if (operation == Operation.PHONE)
+                {
+                    customer.Phones.RemoveAt(numberDecision - 1);
+                    Console.WriteLine($"{operationName} removido!");
+                }
+                else if (operation == Operation.EMAIL)
+                {
+                    customer.Emails.RemoveAt(numberDecision - 1);
+                    Console.WriteLine($"{operationName} removido!");
+                }
+
+                return customer;
+
+            }
+
+            return customer; 
         }
 
         #endregion
