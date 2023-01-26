@@ -1,10 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Xpto.Core.Shared.Entities
 {
@@ -12,24 +6,12 @@ namespace Xpto.Core.Shared.Entities
     {
         public Guid Id { get; set; }
         public string Type { get; set; }
-
-        [JsonProperty("logradouro")]
         public string Street { get; set; }
         public string Number { get; set; }
-
-        [JsonProperty("complemento")]
-        public string Complement { get; set; }
-
-        [JsonProperty("bairro")]
+        public string? Complement { get; set; }
         public string District { get; set; }
-
-        [JsonProperty("localidade")]
         public string City { get; set; }
-
-        [JsonProperty("uf")]
         public string State { get; set; }
-
-        [JsonProperty("cep")]
         public string ZipCode { get; set; }
         public string Note { get; set; }
 
@@ -38,10 +20,55 @@ namespace Xpto.Core.Shared.Entities
             Id = Guid.NewGuid();
         }
 
+        public void CreateOrEditAddress(AddressParams addressParams)
+        {
+            Street = addressParams.Street;  
+            Number = addressParams.Number;
+            Complement = addressParams.Complement;
+            District = addressParams.District;
+            City = addressParams.City;
+            State = addressParams.State;
+            ZipCode = addressParams.ZipCode;
+
+        }
+
+        public void EditAddressNumber(string number)
+        {
+            Number = number;
+        }
+
         public override string ToString() //melhor usar o string builder porque ele não fica ocupando memoria criando variaveis
         {
-            return $"{Street}, {Number} - {District}, {City} - {State}, CEP: {ZipCode}"; //formatar zipcode
-                //string.Join(" ", Street, Number, Complement, District, City, State, ZipCode);
+            return $"{Street}, {Number} - {District}, {City} - {State}, CEP: {ZipCode}"; 
+                
+        }
+    }
+
+    public class AddressParams
+    {
+        [JsonProperty("logradouro")]
+        public string Street { get; set; } = null!;
+        public string Number { get; set; } = null!;
+
+        [JsonProperty("complemento")]
+        public string? Complement { get; set; }
+
+        [JsonProperty("bairro")]
+        public string District { get; set; } = null!;
+
+        [JsonProperty("localidade")]
+        public string City { get; set; } = null!;
+
+        [JsonProperty("uf")]
+        public string State { get; set; } = null!;
+
+        [JsonProperty("cep")]
+        public string ZipCode { get; set; } = null!;
+
+        public override string ToString() 
+        {
+            return $"{Street}, {District}, {City} - {State}, CEP: {ZipCode}";
+
         }
     }
 }

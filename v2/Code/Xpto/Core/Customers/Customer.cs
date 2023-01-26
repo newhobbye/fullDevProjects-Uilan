@@ -30,6 +30,21 @@ namespace Xpto.Core.Customers
             Emails = new List<Email>();
         }
 
+        public void RemoveAddress(Address address)
+        {
+            Addresses.Remove(address);
+        }
+
+        public void RemovePhone(Phone phone)
+        {
+            Phones.Remove(phone);
+        }
+
+        public void RemoveEmail(Email email)
+        {
+            Emails.Remove(email);
+        }
+
         public override string ToString()
         {
             return Name;

@@ -1,36 +1,55 @@
-﻿using System.IO;
-using System.Reflection.Emit;
-using System.Text.RegularExpressions;
-
-namespace Xpto.Core.Shared.Entities
+﻿namespace Xpto.Core.Shared.Entities
 {
     public class Phone
     {
         public Guid Id { get; set; }
-        public string Type { get; set; }
+        public string? Type { get; set; }
         public int Ddd { get; set; }
         public long Number { get; set; }
-        public string Note { get; set; }
+        public string? Note { get; set; }
 
         public Phone()
         {
             Id = Guid.NewGuid();
         }
 
+        public void CreatePhone(PhoneParams phoneParams)
+        {
+            Type = phoneParams.Type;
+            Ddd = phoneParams.Ddd;
+            Number = phoneParams.Number;
+            Note = phoneParams.Note;
+
+            SeparateDDDFromNumber();
+
+        }
+
+        public void EditPhone(long number)
+        {
+            Number = number;
+            SeparateDDDFromNumber();
+        }
+
         public void SeparateDDDFromNumber()
         {
-            string pattern = @"(\d{2})(\d{4,5})(\d{4})";
-
-            var regex = new Regex(pattern);
-            Ddd = int.Parse(regex.Replace(Number.ToString(), "$1"));
-            Number = long.Parse(regex.Replace(Number.ToString(), "$2$3"));
+            Ddd = int.Parse(Number.ToString().Substring(0, 2));
+            Number = long.Parse(Number.ToString().Substring(2));
         }
 
         public override string ToString()
         {
-            return $"({Ddd}) {Number}"; //perguntar pro Uilan
+            return $"({Ddd}) {Number}";
         }
 
 
     }
+
+    public class PhoneParams
+    {
+        public string? Type { get; set; }
+        public int Ddd { get; set; }
+        public long Number { get; set; }
+        public string? Note { get; set; }
+    }
+
 }

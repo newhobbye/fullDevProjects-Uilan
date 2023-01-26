@@ -7,15 +7,15 @@ namespace Xpto.Core.Shared.Functions
     public class ZipCodeFunction
     {
 
-        public Address GetAddressByZipCode(string zipCode)
+        public AddressParams GetAddressByZipCode(string zipCode)
         {
             var client = new RestClient("https://viacep.com.br/");
             var request = new RestRequest($"/ws/{zipCode}/json", Method.Get);
             var response =  client.Execute(request);
 
-            var address = new Address();
-            address = JsonConvert.DeserializeObject<Address>(response.Content!);
-            return address!;
+            var addressParams = new AddressParams();
+            addressParams = JsonConvert.DeserializeObject<AddressParams>(response.Content!);
+            return addressParams!;
         }
 
     }

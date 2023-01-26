@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Globalization;
+using System.Numerics;
 using Xpto.Core.Shared.Entities;
 using Xpto.Core.Shared.Functions;
 
@@ -58,14 +53,14 @@ namespace Xpto.Core.Customers
             Console.Write("Informe o código do cliente ou 0 para sair: ");
             var repository = new CustomerRepository();
 
-            while (true) 
+            while (true)
             {
                 int.TryParse(Console.ReadLine(), out var code);
 
                 if (code == 0)
                     return;
 
-                var customer = App.Customers.FirstOrDefault(x => x.Code == code); 
+                var customer = App.Customers.FirstOrDefault(x => x.Code == code);
 
                 if (customer == null)
                 {
@@ -129,12 +124,12 @@ namespace Xpto.Core.Customers
 
                     Console.WriteLine("Ações:");
                     Console.WriteLine("Pressione: 1 - Adicionar um endereço | 2 - Adicionar um telefone | 3 - Adicionar um E-mail");
-                    Console.WriteLine("Pressione: 4 - Editar endereços | 5 - Editar telefones | 6 - Adicionar E-mails");
+                    Console.WriteLine("Pressione: 4 - Editar endereços | 5 - Editar telefones | 6 - Editar E-mails");
                     Console.WriteLine("Pressione: 7 - Remover endereços | 8 - Remover telefones | 9 - Remover E-mails");
                     Console.WriteLine("0 - Sair"); //VALIDAR DEPOIS INTERVALO ENTRE NUMEROS VALIDOS E NÃO USADOS
                     bool validAction = int.TryParse(Console.ReadLine(), out actionInCustomer);
 
-                    while(validAction == false)
+                    while (validAction == false)
                     {
                         Console.WriteLine("Digito invalido!");
                         Console.WriteLine("Ações:");
@@ -142,59 +137,81 @@ namespace Xpto.Core.Customers
                         Console.WriteLine("Pressione: 4 - Editar endereços | 5 - Editar telefones | 6 - Editar E-mails");
                         Console.WriteLine("Pressione: 7 - Remover endereços | 8 - Remover telefones | 9 - Remover E-mails");
                         Console.WriteLine("0 - Sair");
-                        
+
                         validAction = int.TryParse(Console.ReadLine(), out actionInCustomer);
                     }
 
-                    if(actionInCustomer == 1) //melhorar
+                    if (actionInCustomer == 1 || actionInCustomer == 2 || actionInCustomer == 3)
                     {
-                        customer = CreateAddress(customer);
+                        switch (actionInCustomer)
+                        {
+                            case 1:
+                                customer = ConsoleProcessOfCreateData(customer, Operation.ADDRESS, "Endereço");
+                                break;
+
+                            case 2:
+                                customer = ConsoleProcessOfCreateData(customer, Operation.PHONE, "Telefone");
+                                break;
+
+                            case 3:
+                                customer = ConsoleProcessOfCreateData(customer, Operation.EMAIL, "E-mail");
+                                break;
+
+                        }
+
                     }
-                    else if(actionInCustomer == 2)
+                    else if (actionInCustomer == 4 || actionInCustomer == 5 || actionInCustomer == 6)
                     {
-                        customer = CreatePhones(customer);
+                        switch (actionInCustomer)
+                        {
+                            case 4:
+                                customer = ConsoleProcessOfEditData(customer.Addresses, "Endereço", Operation.ADDRESS, customer);
+                                break;
+
+                            case 5:
+                                customer = ConsoleProcessOfEditData(customer.Phones, "Telefone", Operation.PHONE, customer);
+                                break;
+
+                            case 6:
+                                customer = ConsoleProcessOfEditData(customer.Emails, "E-mail", Operation.EMAIL, customer);
+                                break;
+
+                        }
+
+
                     }
-                    else if(actionInCustomer == 3)
+                    else if (actionInCustomer == 7 || actionInCustomer == 8 || actionInCustomer == 9)
                     {
-                        customer = CreateEmails(customer);
+                        switch (actionInCustomer)
+                        {
+                            case 7:
+                                customer = ConsoleProcessOfRemoveData(customer.Addresses, "Endereço", Operation.ADDRESS, customer);
+                                break;
+
+                            case 8:
+                                customer = ConsoleProcessOfRemoveData(customer.Phones, "Telefone", Operation.PHONE, customer);
+                                break;
+
+                            case 9:
+                                customer = ConsoleProcessOfRemoveData(customer.Emails, "E-mail", Operation.EMAIL, customer);
+                                break;
+
+                        }
+
                     }
-                    else if (actionInCustomer == 4)
+                    else if (actionInCustomer == 0 || actionInCustomer < 0 || actionInCustomer > 9)
                     {
-                        customer = EditAddress(customer);
-                    }
-                    else if(actionInCustomer == 5)
-                    {
-                        customer = EditPhones(customer);
-                    }
-                    else if(actionInCustomer == 6)
-                    {
-                        customer = EditEmails(customer);
-                    }
-                    else if(actionInCustomer == 7)
-                    {
-                        customer = RemoveAdrress(customer);
-                    }
-                    else if (actionInCustomer == 8)
-                    {
-                        customer = RemovePhones(customer);
-                    }
-                    else if (actionInCustomer == 9)
-                    {
-                        customer = RemoveEmails(customer);
-                    }
-                    else if(actionInCustomer == 0)
-                    {
-                        break;
+                        return;
                     }
 
-                    App.Customers.Add(customer);
+                    //App.Customers.Add(customer);  //acredito que este add está duplicando o cadastro
                     repository.Save();
 
 
                 }
 
                 Console.WriteLine();
-                Console.Write("Informe o código do cliente ou 0 para sair: "); 
+                Console.Write("Informe o código do cliente ou 0 para sair: ");
             }
         }
 
@@ -458,14 +475,20 @@ namespace Xpto.Core.Customers
         #region[Manipulação de dados do cliente]
         public Customer CreateAddress(Customer customer)
         {
-            customer = ProcessOfCreateData(customer, Operation.ADDRESS, "Endereço");
-
+            customer.Addresses.Add(ConsoleCreateAddressInteration());
             return customer;
         }
 
         public Customer CreatePhones(Customer customer)
         {
-            customer = ProcessOfCreateData(customer, Operation.PHONE, "Telefone");
+            Console.Write("Telefone com DDD:");
+            var phoneParams = new PhoneParams();
+
+            phoneParams.Number = Convert.ToInt64(Console.ReadLine());
+
+            Phone phone = new Phone();
+            phone.CreatePhone(phoneParams);
+            customer.Phones.Add(phone);
 
             return customer;
 
@@ -473,193 +496,171 @@ namespace Xpto.Core.Customers
 
         public Customer CreateEmails(Customer customer)
         {
-            customer = ProcessOfCreateData(customer, Operation.EMAIL, "E-mail");
+            Console.Write("E-mail:");
+
+            var emailParams = new EmailParams();
+            emailParams.Address = Console.ReadLine();
+
+            var email = new Email();
+            email.CreateEmail(emailParams);
+            customer.Emails.Add(email);
 
             return customer;
 
         }
 
-        public Customer EditAddress(Customer customer)
+        public Customer EditAddress(Customer customer, Address address, int selectedIndex)
         {
 
             Console.WriteLine();
             Console.WriteLine(("").PadRight(100, '-'));
             Console.WriteLine();
 
-            customer = GenericProcessOfEditData(customer.Addresses, "Endereço", Operation.ADDRESS, customer);
-
-            return customer;
-        }
-
-        public Customer EditPhones(Customer customer)
-        {
+            int editNumber = -1;
             Console.WriteLine();
-            Console.WriteLine(("").PadRight(100, '-'));
+            Console.WriteLine("Editar somente o numero do endereço escolhido?");
+            Console.WriteLine(address);
             Console.WriteLine();
+            Console.WriteLine("1 - Sim | 2 - Não");
+            bool validation = int.TryParse(Console.ReadLine(), out editNumber);
 
-            customer = GenericProcessOfEditData(customer.Phones, "Telefone", Operation.PHONE, customer);
-
-            return customer;
-        }
-
-        public Customer EditEmails(Customer customer)
-        {
-            Console.WriteLine();
-            Console.WriteLine(("").PadRight(100, '-'));
-            Console.WriteLine();
-
-            customer = GenericProcessOfEditData(customer.Emails, "E-mail", Operation.EMAIL, customer);
-
-            return customer;
-        }
-
-        public Customer RemoveAdrress(Customer customer)
-        {
-            Console.WriteLine();
-            Console.WriteLine(("").PadRight(100, '-'));
-            Console.WriteLine();
-
-            customer = GenericProcessOfRemoveData(customer.Addresses, "Endereço", Operation.ADDRESS, customer);
-
-            return customer;
-        }
-
-        public Customer RemovePhones(Customer customer)
-        {
-            Console.WriteLine();
-            Console.WriteLine(("").PadRight(100, '-'));
-            Console.WriteLine();
-
-            customer = GenericProcessOfRemoveData(customer.Phones, "Telefone", Operation.PHONE, customer);
-
-            return customer;
-        }
-
-        public Customer RemoveEmails(Customer customer)
-        {
-            Console.WriteLine();
-            Console.WriteLine(("").PadRight(100, '-'));
-            Console.WriteLine();
-
-            customer = GenericProcessOfRemoveData(customer.Emails, "E-mail", Operation.EMAIL, customer);
-
-            return customer;
-        }
-
-        public Address AuxiliaryEditAddress(Address address)
-        {
-            var zipFunction = new ZipCodeFunction();
-
-            Console.Write("CEP:");
-            string tempZipCode = Console.ReadLine();
-
-            address = zipFunction.GetAddressByZipCode(tempZipCode);
-
-            if (address.Street != null)
+            while (validation == false)
             {
-                Console.Write("Número:");
-                address.Number = Console.ReadLine();
+                Console.WriteLine("Digito invalido!");
+                Console.WriteLine("Editar somente o numero do endereço escolhido?");
                 Console.WriteLine();
-                Console.WriteLine("Endereço editado com sucesso!");
+                Console.WriteLine("1 - Sim | 2 - Não");
+                validation = int.TryParse(Console.ReadLine(), out editNumber);
+            }
+
+            if (editNumber == 1)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Informe o numero do endereço: ");
+                int newNumber = int.Parse(Console.ReadLine());
+                address.EditAddressNumber(newNumber.ToString());
+                Console.WriteLine("Endereço atualizado!");
+                Console.WriteLine(address);
+
+                //customer.Addresses[selectedIndex - 1] = address;
             }
             else
             {
-                Console.Write("Logradouro:");
-                address.Street = Console.ReadLine();
-                Console.Write("Número:");
-                address.Number = Console.ReadLine();
-                Console.Write("Complemento:");
-                address.Complement = Console.ReadLine();
-                Console.Write("Bairro:");
-                address.District = Console.ReadLine();
-                Console.Write("Cidade:");
-                address.City = Console.ReadLine();
-                Console.Write("Estado:");
-                address.State = Console.ReadLine();
-                Console.WriteLine("Endereço editado com sucesso!");
+                address = ConsoleCreateAddressInteration();
+                //customer.Addresses[selectedIndex - 1] = address;
             }
+            return customer;
+        }
+
+        public Customer EditPhones(Customer customer, Phone phone, int selectedIndex)
+        {
+            Console.WriteLine();
+            Console.WriteLine(("").PadRight(100, '-'));
+            Console.WriteLine();
+
+            Console.Write("Telefone com DDD:");
+            long newPhone = Convert.ToInt64(Console.ReadLine());
+            phone.EditPhone(newPhone);
+
+            Console.WriteLine("Telefone editado com sucesso!");
+            Console.WriteLine(phone);
+
+            //customer.Phones[selectedIndex - 1] = phone; ALTERAÇÃO POR REFERENCIA DE MEMORIA DO OBJETO
+
+            return customer;
+        }
+
+        public Customer EditEmails(Customer customer, Email email, int selectedIndex)
+        {
+            Console.WriteLine();
+            Console.WriteLine(("").PadRight(100, '-'));
+            Console.WriteLine();
+
+            Console.Write("E-mail:");
+            string newEmail = Console.ReadLine();
+            email.EditEmail(newEmail);
+            Console.WriteLine("E-mail editado com sucesso");
+            Console.WriteLine(email);
+
+            //customer.Emails[selectedIndex - 1] = email;
+
+            return customer;
+        }
+
+        
+
+        #endregion
+
+        #region[Interation Console]
+
+        public Address ConsoleCreateAddressInteration()
+        {
+            var zipFunction = new ZipCodeFunction();
+            Console.WriteLine();
+            Console.WriteLine("Endereço:");
+            var addressParams = new AddressParams();
+            string tempZipCode;
+
+            Console.Write("CEP:");
+            tempZipCode = Console.ReadLine();
+            Console.WriteLine();
+            addressParams = zipFunction.GetAddressByZipCode(tempZipCode);
+
+
+
+            if (addressParams.Street != null)
+            {
+                Console.WriteLine("Endereço encontrado:");
+                Console.WriteLine(addressParams);
+
+                Console.WriteLine();
+                Console.Write("Número:");
+                addressParams.Number = Console.ReadLine();
+            }
+            else
+            {
+                Console.WriteLine("Endereço não encontrado. Digite manualmente:");
+                Console.WriteLine();
+                addressParams.ZipCode = tempZipCode;
+                Console.Write("Logradouro:");
+                addressParams.Street = Console.ReadLine();
+                Console.Write("Número:");
+                addressParams.Number = Console.ReadLine();
+                Console.Write("Complemento:");
+                addressParams.Complement = Console.ReadLine();
+                Console.Write("Bairro:");
+                addressParams.District = Console.ReadLine();
+                Console.Write("Cidade:");
+                addressParams.City = Console.ReadLine();
+                Console.Write("Estado:");
+                addressParams.State = Console.ReadLine();
+            }
+
+            var address = new Address();
+            address.CreateOrEditAddress(addressParams);
 
             return address;
         }
 
-        public Phone AuxiliaryEditPhone(Phone phone)
-        {
-            Console.WriteLine();
-            Console.Write("Telefone com DDD:");
-            phone.Number = Convert.ToInt64(Console.ReadLine());
-            phone.SeparateDDDFromNumber();
-            Console.WriteLine("Telefone editado com sucesso!");
-            return phone;
-        }
-
-        public Email AuxiliaryEditEmail(Email email)
-        {
-            Console.Write("E-mail:");
-            email.Address = Console.ReadLine();
-            Console.WriteLine("E-mail cadastrado com sucesso");
-            return email;
-        }
-
-        public Customer ProcessOfCreateData(Customer customer, Operation operation, string operationName)
+        public Customer ConsoleProcessOfCreateData(Customer customer, Operation operation, string operationName)
         {
             int numberInputValidation = 0;
             bool resultInputValidation = false;
-            var zipFunction = new ZipCodeFunction();
 
             do
             {
                 if (operation == Operation.ADDRESS)
                 {
-                    Console.WriteLine("Endereço:");
+                    customer = CreateAddress(customer);
 
-                    var address = new Address();
-                    string tempZipCode;
-
-                    Console.Write("CEP:");
-                    tempZipCode = Console.ReadLine();
-
-                    address = zipFunction.GetAddressByZipCode(tempZipCode);
-
-                    if (address.Street != null)
-                    {
-                        Console.Write("Número:");
-                        address.Number = Console.ReadLine();
-                    }
-                    else
-                    {
-                        Console.Write("Logradouro:");
-                        address.Street = Console.ReadLine();
-                        Console.Write("Número:");
-                        address.Number = Console.ReadLine();
-                        Console.Write("Complemento:");
-                        address.Complement = Console.ReadLine();
-                        Console.Write("Bairro:");
-                        address.District = Console.ReadLine();
-                        Console.Write("Cidade:");
-                        address.City = Console.ReadLine();
-                        Console.Write("Estado:");
-                        address.State = Console.ReadLine();
-                    }
-
-                    customer.Addresses.Add(address);
-                    
                 }
-                else if(operation == Operation.PHONE)
+                else if (operation == Operation.PHONE)
                 {
-                    Console.Write("Telefone com DDD:");
-
-                    var phone = new Phone();
-                    phone.Number = Convert.ToInt64(Console.ReadLine());
-                    phone.SeparateDDDFromNumber();
-                    customer.Phones.Add(phone);
+                    customer = CreatePhones(customer);
                 }
                 else if (operation == Operation.EMAIL)
                 {
-                    Console.Write("E-mail:");
-
-                    var email = new Email();
-                    email.Address = Console.ReadLine();
-                    customer.Emails.Add(email);
+                    customer = CreateEmails(customer);
                 }
 
                 Console.WriteLine($"Deseja cadastrar outro {operationName.ToLower()}? Digite: 1 - Sim, Qualquer numero - Não");
@@ -681,86 +682,53 @@ namespace Xpto.Core.Customers
             return customer;
         }
 
-        public Customer GenericProcessOfEditData<T>(IList<T> array, string operationName, Operation operation, Customer customer)
+        public Customer ConsoleProcessOfEditData<T>(IList<T> array, string operationName, Operation operation, Customer customer)
         {
+            Console.WriteLine();
+            Console.WriteLine($"Estes são os {operationName.ToLower()}s do cliente:");
+            Console.WriteLine();
 
-            if (array.Count == 1)
+            for (int i = 0; i < array.Count; i++)
             {
-                T data = array.FirstOrDefault();
+                Console.WriteLine("{0} - {1}", i + 1, array[i]);
+            }
 
-                Console.WriteLine($"{operationName} a ser editado:");
-                Console.WriteLine(data);
-                Console.WriteLine();
-                if(operation == Operation.ADDRESS)
-                {
-                    var address = data as Address;
-                    address = AuxiliaryEditAddress(address!); 
-                    customer.Addresses[0] = address;
-                }
-                else if(operation == Operation.PHONE)
-                {
-                    var phone = data as Phone;
-                    phone = AuxiliaryEditPhone(phone!);
-                    customer.Phones[0] = phone;
-                }
-                else if(operation == Operation.EMAIL)
-                {
-                    var email = data as Email;
-                    email = AuxiliaryEditEmail(email!);
-                    customer.Emails[0] = email;
-                }
+            Console.WriteLine();
+            Console.WriteLine($"Digite o numero que corresponde ao {operationName.ToLower()} que gostaria de editar:");
+            int actionNumber = -1;
+            bool actionValidation = int.TryParse(Console.ReadLine(), out actionNumber);
 
+            while (actionValidation == false)
+            {
+                Console.WriteLine("Digito invalido!");
+                Console.WriteLine($"Digite o numero que corresponde ao {operationName.ToLower()} que gostaria de editar:");
+                actionValidation = int.TryParse(Console.ReadLine(), out actionNumber);
+
+            }
+
+            if (actionNumber < 0 || actionNumber > array.Count)
+            {
+                Console.WriteLine($"Este numero não corresponde a nenhum {operationName.ToLower()}!");
+                return customer;
             }
             else
             {
-                Console.WriteLine($"Estes são os {operationName.ToLower()}s do cliente:");
-                Console.WriteLine();
+                var dataEdit = array[actionNumber - 1];
 
-                for (int i = 0; i < array.Count; i++)
+                if (operation == Operation.ADDRESS)
                 {
-                    Console.WriteLine("{0} - {1}", i + 1, array[i]);
-                }
-                Console.WriteLine();
-                Console.WriteLine($"Digite o numero que corresponde ao {operationName.ToLower()} que gostaria de editar:");
-                int actionNumber = -1;
-                bool actionValidation = int.TryParse(Console.ReadLine(), out actionNumber);
-
-                while (actionValidation == false)
-                {
-                    Console.WriteLine("Digito invalido!");
-                    Console.WriteLine($"Digite o numero que corresponde ao {operationName.ToLower()} que gostaria de editar:");
-                    actionValidation = int.TryParse(Console.ReadLine(), out actionNumber);
+                    customer = EditAddress(customer, dataEdit as Address, actionNumber);
 
                 }
-
-                if (actionNumber < 0 || actionNumber > array.Count)
+                else if (operation == Operation.PHONE)
                 {
-                    Console.WriteLine($"Este numero não corresponde a nenhum {operationName.ToLower()}!");
-                    return customer;
+                    customer = EditPhones(customer, dataEdit as Phone, actionNumber);
+
+
                 }
-                else
+                else if (operation == Operation.EMAIL)
                 {
-                    var dataEdit = array[actionNumber - 1];
-
-                    if (operation == Operation.ADDRESS)
-                    {
-                        var address = dataEdit as Address;
-                        address = AuxiliaryEditAddress(address!);
-                        customer.Addresses[actionNumber - 1] = address;
-                    }
-                    else if (operation == Operation.PHONE)
-                    {
-                        var phone = dataEdit as Phone;
-                        phone = AuxiliaryEditPhone(phone!);
-                        customer.Phones[actionNumber - 1] = phone;
-                    }
-                    else if (operation == Operation.EMAIL)
-                    {
-                        var email = dataEdit as Email;
-                        email = AuxiliaryEditEmail(email!);
-                        customer.Emails[actionNumber - 1] = email;
-                    }
-
+                    customer = EditEmails(customer, dataEdit as Email, actionNumber);
                 }
 
             }
@@ -768,106 +736,60 @@ namespace Xpto.Core.Customers
             return customer;
         }
 
-        public Customer GenericProcessOfRemoveData<T>(IList<T> array, string operationName, Operation operation, Customer customer)
+        public Customer ConsoleProcessOfRemoveData<T>(IList<T> array, string operationName, Operation operation, Customer customer)
         {
-            if (array.Count == 1)
+
+            Console.WriteLine();
+            Console.WriteLine(("").PadRight(100, '-'));
+            Console.WriteLine();
+
+            Console.WriteLine($"{operationName}s disponiveis para remoção:");
+            Console.WriteLine();
+
+            for (int i = 0; i < array.Count; i++)
             {
-                Console.WriteLine($"Tem certeza que quer remover este {operationName.ToLower()}?");
-                Console.WriteLine(array[0]);
-
-                Console.WriteLine("1 - Sim | 2 - Não");
-                int actionDecicion = -1;
-                bool actionValidation = int.TryParse(Console.ReadLine(), out actionDecicion);
-
-                while (actionValidation == false)
-                {
-                    Console.WriteLine("Digito invalido!");
-                    Console.WriteLine($"Tem certeza que quer remover este {operationName.ToLower()}?");
-                    Console.WriteLine("1 - Sim | 2 - Não");
-                    actionValidation = int.TryParse(Console.ReadLine(), out actionDecicion);
-
-                }
-
-                if (actionDecicion == 1)
-                {
-                    if (operation == Operation.ADDRESS)
-                    {
-                        customer.Addresses.RemoveAt(0);
-                        Console.WriteLine($"{operationName} removido!");
-                    }
-                    else if(operation == Operation.PHONE) 
-                    {
-                        customer.Phones.RemoveAt(0);
-                        Console.WriteLine($"{operationName} removido!");
-                    }
-                    else if (operation == Operation.EMAIL)
-                    {
-                        customer.Phones.RemoveAt(0);
-                        Console.WriteLine($"{operationName} removido!");
-                    }
-                    
-                    return customer;
-
-                }
-                else if (actionDecicion < 0 || actionDecicion > array.Count)
-                {
-                    Console.WriteLine("Este numero não corresponde a nenhuma ação.");
-                    return customer;
-                }
-                else if (actionDecicion == 2)
-                {
-                    Console.WriteLine("Operação cancelada!");
-                    Console.WriteLine();
-                    return customer;
-                }
+                Console.WriteLine("{0} - {1}", i + 1, array[i]);
             }
-            else
+
+            Console.WriteLine();
+            Console.WriteLine($"Digite o numero referente ao {operationName.ToLower()} que gostaria de remover: ");
+            int numberDecision = -1;
+            bool validationAction = int.TryParse(Console.ReadLine(), out numberDecision);
+
+            while (validationAction == false)
             {
-                Console.WriteLine($"{operationName}s disponiveis para remoção:");
-
-                for (int i = 0; i < array.Count; i++)
-                {
-                    Console.WriteLine("{0} - {1}", i + 1, array[i]);
-                }
-
+                Console.WriteLine("Digito invalido!");
                 Console.WriteLine($"Digite o numero referente ao {operationName.ToLower()} que gostaria de remover: ");
-                int numberDecision = -1;
-                bool validationAction = int.TryParse(Console.ReadLine(), out numberDecision);
-
-                while (validationAction == false)
-                {
-                    Console.WriteLine("Digito invalido!");
-                    Console.WriteLine($"Digite o numero referente ao {operationName.ToLower()} que gostaria de remover: ");
-                    validationAction = int.TryParse(Console.ReadLine(), out numberDecision);
-                }
-
-                if (numberDecision < 0 || numberDecision > array.Count)
-                {
-                    Console.WriteLine($"Este numero não corresponde a nenhum {operationName.ToLower()}!");
-                    return customer;
-                }
-
-                if (operation == Operation.ADDRESS)
-                {
-                    customer.Addresses.RemoveAt(numberDecision - 1);
-                    Console.WriteLine($"{operationName} removido!");
-                }
-                else if (operation == Operation.PHONE)
-                {
-                    customer.Phones.RemoveAt(numberDecision - 1);
-                    Console.WriteLine($"{operationName} removido!");
-                }
-                else if (operation == Operation.EMAIL)
-                {
-                    customer.Emails.RemoveAt(numberDecision - 1);
-                    Console.WriteLine($"{operationName} removido!");
-                }
-
-                return customer;
-
+                validationAction = int.TryParse(Console.ReadLine(), out numberDecision);
             }
 
-            return customer; 
+            if (numberDecision < 0 || numberDecision > array.Count)
+            {
+                Console.WriteLine($"Este numero não corresponde a nenhum {operationName.ToLower()}!");
+                return customer;
+            }
+
+            T dataRemove = array[numberDecision - 1];
+
+            if (operation == Operation.ADDRESS)
+            {
+                customer.RemoveAddress(dataRemove as Address);
+                Console.WriteLine($"{operationName} removido!");
+                Console.WriteLine(dataRemove);
+            }
+            else if (operation == Operation.PHONE)
+            {
+                customer.RemovePhone(dataRemove as Phone);
+                Console.WriteLine($"{operationName} removido!");
+            }
+            else if (operation == Operation.EMAIL)
+            {
+                customer.RemoveEmail(dataRemove as Email);
+                Console.WriteLine($"{operationName} removido!");
+            }
+
+            return customer;
+
         }
 
         #endregion
