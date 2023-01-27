@@ -1,9 +1,5 @@
 ﻿// ReSharper disable All
 
-using System.Globalization;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.Json;
 using Xpto.Core.Customers;
 
 #pragma warning disable CS8601 //perguntar o que é isso
@@ -57,11 +53,14 @@ namespace Xpto.Core
 
         public static int GetAction()
         {
-            Console.WriteLine("Informe a ação que deseja executar");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(("Informe a ação que deseja executar:").PadLeft(40,' '));
+            Console.ResetColor();
             Console.WriteLine();
 
+            Console.ForegroundColor = ConsoleColor.White; 
             foreach (var item in Actions)
-                Console.WriteLine($"{item.Key} - {item.Value}");
+                Console.WriteLine($"    {item.Key} - {item.Value}");
 
             Console.WriteLine();
 
@@ -78,9 +77,13 @@ namespace Xpto.Core
  
         public static void PrintHeader()
         {
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine(("").PadRight(100, '+'));
-            Console.WriteLine(" Xpto - V1");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(("XPTO - V2").PadLeft(52,' ')); 
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine(("").PadRight(100, '+'));
+            Console.ResetColor();
             Console.WriteLine();
         }
 

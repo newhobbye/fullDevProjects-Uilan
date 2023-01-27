@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Numerics;
 using Xpto.Core.Shared.Entities;
 using Xpto.Core.Shared.Functions;
 
@@ -10,30 +9,46 @@ namespace Xpto.Core.Customers
         public void List()
         {
             App.Clear();
-            Console.WriteLine("Lista de Clientes");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine((" Lista de Clientes").PadLeft(20,'-'));
 
             if (App.Customers.Count == 1)
-                Console.WriteLine("1 registro encontrado");
+            {
+                Console.WriteLine();
+                Console.WriteLine(" 1 registro encontrado!");
+            }
             else if (App.Customers.Count > 1)
-                Console.WriteLine("{0} registros encontrados", App.Customers.Count);
+            {
+                Console.WriteLine();
+                Console.WriteLine(" {0} registros encontrados", App.Customers.Count);
+            }
             else
-                Console.WriteLine("nenhum registro encontrado");
+            {
+                Console.WriteLine();
+                Console.WriteLine(" Nenhum registro encontrado");
+            }
 
             Console.WriteLine();
-            Console.WriteLine("Lista de Clientes");
+            Console.WriteLine(" Clientes:");
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine(("").PadRight(100, '-'));
-            Console.WriteLine("CÓDIGO".PadRight(10, ' ') + "| NOME");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(" CÓDIGO".PadRight(10, ' ') + "| NOME");
 
             foreach (var customer in App.Customers)
             {
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine(("").PadRight(100, '-'));
-                Console.WriteLine($"{customer.Code.ToString().PadRight(10, ' ')}| {customer.Name}");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine($" {customer.Code.ToString().PadRight(10, ' ')}| {customer.Name}");
+                Console.ForegroundColor = ConsoleColor.Yellow;
             }
 
             Console.WriteLine(("").PadRight(100, '-'));
 
             Console.WriteLine();
-            Console.WriteLine("0 - Voltar");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(" Pressione 0 - Voltar");
             Console.WriteLine();
 
             int.TryParse(Console.ReadLine(), out var action);
@@ -48,9 +63,10 @@ namespace Xpto.Core.Customers
         public void Select()
         {
             App.Clear();
-            Console.WriteLine("Consulta de Cliente");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(("Consultar Cliente:").PadLeft(25, ' '));
             Console.WriteLine();
-            Console.Write("Informe o código do cliente ou 0 para sair: ");
+            Console.Write(" Informe o código do cliente ou 0 para sair: ");
             var repository = new CustomerRepository();
 
             while (true)
@@ -65,85 +81,120 @@ namespace Xpto.Core.Customers
                 if (customer == null)
                 {
                     App.Clear();
-                    Console.WriteLine("Consulta de Cliente");
+                    Console.WriteLine(("Consultar Cliente:").PadLeft(25, ' '));
                     Console.WriteLine();
                     Console.ResetColor();
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Cliente não encontrato ou código inválido");
+                    Console.WriteLine(" Cliente não encontrado ou código inválido.");
                     Console.ResetColor();
                 }
                 else
                 {
                     App.Clear();
-                    Console.WriteLine("Consulta de Cliente");
+                    Console.WriteLine(("Consultar Cliente:").PadLeft(25, ' '));
                     Console.WriteLine();
 
-
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.WriteLine(("").PadRight(100, '-'));
-                    Console.WriteLine("Cliente Selecionado");
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine(" Cliente Selecionado");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.WriteLine(("").PadRight(100, '-'));
 
-                    Console.WriteLine("Código: {0}", customer.Code);
-                    Console.WriteLine("Nome: {0}", customer.Name);
-                    Console.WriteLine("Tipo de Pessoa: {0}", customer.PersonType);
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine(" Código: {0}", customer.Code);
+                    Console.WriteLine(" Nome: {0}", customer.Name);
+                    Console.WriteLine(" Tipo de Pessoa: {0}", customer.PersonType);
 
                     if (customer.PersonType?.ToUpper() == "PJ")
                     {
-                        Console.WriteLine("Nome Fantasia:: {0}", customer.Nickname);
+                        Console.WriteLine(" Nome Fantasia:: {0}", customer.Nickname);
                     }
 
-                    Console.WriteLine("CPF/CNPJ: {0}", customer.Identity);
+                    Console.WriteLine(" CPF/CNPJ: {0}", customer.Identity);
 
                     if (customer.PersonType?.ToUpper() == "PF" && customer.BirthDate != null)
                     {
-                        Console.WriteLine("Data de Nascimento: {0}", ((DateTime)customer.BirthDate).ToString("dd/MM/yyyy"));
+                        Console.WriteLine(" Data de Nascimento: {0}", ((DateTime)customer.BirthDate).ToString("dd/MM/yyyy"));
                     }
 
 
                     foreach (var item in customer.Addresses)
                     {
-                        Console.WriteLine("Endereço: {0}", item);
+                        Console.WriteLine(" Endereço: {0}", item);
                     }
 
                     foreach (var item in customer.Phones)
                     {
-                        Console.WriteLine("Telefone: {0}", item);
+                        Console.WriteLine(" Telefone: {0}", item);
                     }
 
                     foreach (var item in customer.Emails)
                     {
-                        Console.WriteLine("E-mail: {0}", item);
+                        Console.WriteLine(" E-mail: {0}", item);
                     }
 
 
 
-                    Console.WriteLine("Observação: {0}", customer.Note);
+                    Console.WriteLine(" Observação: {0}", customer.Note);
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.WriteLine(("").PadRight(100, '-'));
 
-                    int actionInCustomer = -1;
+                    int actionMenu = -1;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("  Ações:");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine(("").PadRight(100, '-'));
 
-                    Console.WriteLine("Ações:");
-                    Console.WriteLine("Pressione: 1 - Adicionar um endereço | 2 - Adicionar um telefone | 3 - Adicionar um E-mail");
-                    Console.WriteLine("Pressione: 4 - Editar endereços | 5 - Editar telefones | 6 - Editar E-mails");
-                    Console.WriteLine("Pressione: 7 - Remover endereços | 8 - Remover telefones | 9 - Remover E-mails");
-                    Console.WriteLine("0 - Sair"); //VALIDAR DEPOIS INTERVALO ENTRE NUMEROS VALIDOS E NÃO USADOS
-                    bool validAction = int.TryParse(Console.ReadLine(), out actionInCustomer);
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine(" Pressione: 1 - Adicionar dados | 2 - Editar dados | 3 - Remover dados");
+                    Console.WriteLine(" 0 - Sair"); 
+                    bool validActionMenu = int.TryParse(Console.ReadLine(), out actionMenu);
 
-                    while (validAction == false)
+                    while (validActionMenu == false)
                     {
-                        Console.WriteLine("Digito invalido!");
+                        Console.WriteLine();
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(" Digito invalido!");
+                        Console.WriteLine();
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("Ações:");
-                        Console.WriteLine("Pressione: 1 - Adicionar um endereço | 2 - Adicionar um telefone | 3 - Adicionar um E-mail");
-                        Console.WriteLine("Pressione: 4 - Editar endereços | 5 - Editar telefones | 6 - Editar E-mails");
-                        Console.WriteLine("Pressione: 7 - Remover endereços | 8 - Remover telefones | 9 - Remover E-mails");
-                        Console.WriteLine("0 - Sair");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.WriteLine(" Pressione: 1 - Adicionar dados | 2 - Editar dados | 3 - Remover dados");
+                        Console.WriteLine(" 0 - Sair");
 
-                        validAction = int.TryParse(Console.ReadLine(), out actionInCustomer);
+                        validActionMenu = int.TryParse(Console.ReadLine(), out actionMenu);
                     }
 
-                    if (actionInCustomer == 1 || actionInCustomer == 2 || actionInCustomer == 3)
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine(("").PadRight(100, '-'));
+
+
+
+                    if (actionMenu == 1)
                     {
-                        switch (actionInCustomer)
+                        int actionSubMenu = -1;
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.WriteLine(" Pressione: 1 - Adicionar endereço | 2 - Adicionar telefone | 3 - Adicionar E-mail");
+                        Console.WriteLine(" 0 - Sair");
+                        bool validActionSubMenu = int.TryParse(Console.ReadLine(), out actionSubMenu);
+
+                        while (validActionSubMenu == false)
+                        {
+                            Console.WriteLine();
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(" Digito invalido!");
+                            Console.WriteLine();
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine("Ações:");
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.WriteLine(" Pressione: 1 - Adicionar endereço | 2 - Adicionar telefone | 3 - Adicionar E-mail");
+                            Console.WriteLine(" 0 - Sair");
+
+                            validActionSubMenu = int.TryParse(Console.ReadLine(), out actionSubMenu);
+                        }
+
+                        switch (actionSubMenu)
                         {
                             case 1:
                                 customer = ConsoleProcessOfCreateData(customer, Operation.ADDRESS, "Endereço");
@@ -158,53 +209,90 @@ namespace Xpto.Core.Customers
                                 break;
 
                         }
-
                     }
-                    else if (actionInCustomer == 4 || actionInCustomer == 5 || actionInCustomer == 6)
+                    else if (actionMenu == 2)
                     {
-                        switch (actionInCustomer)
+                        int actionSubMenu = -1;
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.WriteLine(" Pressione: 1 - Editar endereço | 2 - Editar telefone | 3 - Editar E-mail");
+                        Console.WriteLine(" 0 - Sair");
+                        bool validActionSubMenu = int.TryParse(Console.ReadLine(), out actionSubMenu);
+
+                        while (validActionSubMenu == false)
                         {
-                            case 4:
+                            Console.WriteLine();
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(" Digito invalido!");
+                            Console.WriteLine();
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine("Ações:");
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.WriteLine(" Pressione: 1 - Editar endereço | 2 - Editar telefone | 3 - Editar E-mail");
+                            Console.WriteLine(" 0 - Sair");
+
+                            validActionSubMenu = int.TryParse(Console.ReadLine(), out actionSubMenu);
+                        }
+
+                        switch (actionSubMenu)
+                        {
+                            case 1:
                                 customer = ConsoleProcessOfEditData(customer.Addresses, "Endereço", Operation.ADDRESS, customer);
                                 break;
 
-                            case 5:
+                            case 2:
                                 customer = ConsoleProcessOfEditData(customer.Phones, "Telefone", Operation.PHONE, customer);
                                 break;
 
-                            case 6:
+                            case 3:
                                 customer = ConsoleProcessOfEditData(customer.Emails, "E-mail", Operation.EMAIL, customer);
                                 break;
 
                         }
-
-
                     }
-                    else if (actionInCustomer == 7 || actionInCustomer == 8 || actionInCustomer == 9)
+                    else if (actionMenu == 3)
                     {
-                        switch (actionInCustomer)
+                        int actionSubMenu = -1;
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.WriteLine(" Pressione: 1 - Editar endereço | 2 - Editar telefone | 3 - Editar E-mail");
+                        Console.WriteLine(" 0 - Sair");
+                        bool validActionSubMenu = int.TryParse(Console.ReadLine(), out actionSubMenu);
+
+                        while (validActionSubMenu == false)
                         {
-                            case 7:
+                            Console.WriteLine();
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(" Digito invalido!");
+                            Console.WriteLine();
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine("Ações:");
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.WriteLine(" Pressione: 1 - Editar endereço | 2 - Editar telefone | 3 - Editar E-mail");
+                            Console.WriteLine(" 0 - Sair");
+
+                            validActionSubMenu = int.TryParse(Console.ReadLine(), out actionSubMenu);
+                        }
+
+                        switch (actionSubMenu)
+                        {
+                            case 1:
                                 customer = ConsoleProcessOfRemoveData(customer.Addresses, "Endereço", Operation.ADDRESS, customer);
                                 break;
 
-                            case 8:
+                            case 2:
                                 customer = ConsoleProcessOfRemoveData(customer.Phones, "Telefone", Operation.PHONE, customer);
                                 break;
 
-                            case 9:
+                            case 3:
                                 customer = ConsoleProcessOfRemoveData(customer.Emails, "E-mail", Operation.EMAIL, customer);
                                 break;
 
                         }
-
                     }
-                    else if (actionInCustomer == 0 || actionInCustomer < 0 || actionInCustomer > 9)
+                    else if (actionMenu == 0 || actionMenu < 0 || actionMenu > 3)
                     {
                         return;
                     }
 
-                    //App.Customers.Add(customer);  //acredito que este add está duplicando o cadastro
                     repository.Save();
 
 
